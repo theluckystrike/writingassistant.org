@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Essay Outline Generator — Structure Your Essay</title>
+  <meta name="description" content="Generate a structured essay outline instantly: introduction, body paragraphs, conclusion. Editable, copy, or download as TXT.">
+  <link rel="canonical" href="https://writingassistant.org/essay-outline-generator">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Essay Outline Generator",
+    "url": "https://writingassistant.org/essay-outline-generator",
+    "description": "Generate a structured essay outline instantly: introduction, body paragraphs, conclusion. Editable, copy, or download as TXT.",
+    "applicationCategory": "Writing",
+    "operatingSystem": "All",
+    "browserRequirements": "JavaScript enabled"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type":"Question","name":"What is an essay outline?","acceptedAnswer":{"@type":"Answer","text":"An essay outline is a structured plan that organizes your main ideas, thesis, and evidence before writing. It ensures logical flow and saves time."}},
+      {"@type":"Question","name":"How many body paragraphs should an essay have?","acceptedAnswer":{"@type":"Answer","text":"Most essays have 3–7 body paragraphs. The right number depends on your topic depth and assignment requirements."}},
+      {"@type":"Question","name":"What is the difference between argumentative and persuasive essays?","acceptedAnswer":{"@type":"Answer","text":"Argumentative relies on logic and evidence; persuasive appeals to emotion and values. Both aim to convince, but use different strategies."}},
+      {"@type":"Question","name":"Can I edit the outline after generating?","acceptedAnswer":{"@type":"Answer","text":"Yes, every section is fully editable inline. Click any text to modify it directly."}},
+      {"@type":"Question","name":"How do I save my outline?","acceptedAnswer":{"@type":"Answer","text":"Use the 'Copy Outline' button to copy to clipboard, or 'Download as TXT' to save as a text file."}}
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://writingassistant.org/"},
+      {"@type":"ListItem","position":2,"name":"Essay Outline Generator","item":"https://writingassistant.org/essay-outline-generator"}
+    ]
+  }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+    }
+    .container {
+      max-width: 960px;
+      width: 100%;
+      background: #111;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+      margin: 1rem 0;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.25rem;
+      color: #f0f0f0;
+      letter-spacing: -0.02em;
+    }
+    .subhead {
+      color: #aaa;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: flex-end;
+    }
+    .controls > div {
+      flex: 1 1 180px;
+      min-width: 140px;
+    }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #aaa;
+      margin-bottom: 0.3rem;
+    }
+    input, select, button {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      color: #e0e0e0;
+      padding: 0.6rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      width: 100%;
+      transition: border 0.2s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #4fc3f7;
+    }
+    button {
+      background: #4fc3f7;
+      color: #0a0a0a;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.02em;
+    }
+    button:hover { background: #3ab0e0; }
+    button:active { transform: scale(0.97); }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin: 1.5rem 0 1rem;
+    }
+    .btn-group button {
+      flex: 1 1 160px;
+    }
+    .outline-section {
+      margin-top: 1.5rem;
+      padding: 1.2rem;
+      background: #161616;
+      border-radius: 12px;
+      border-left: 3px solid #4fc3f7;
+    }
+    .outline-section h2 {
+      font-size: 1.2rem;
+      color: #4fc3f7;
+      margin-bottom: 0.8rem;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 0.3rem;
+    }
+    .outline-item {
+      margin: 0.6rem 0;
+      padding: 0.4rem 0.6rem;
+      background: #1c1c1c;
+      border-radius: 6px;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .outline-item .label {
+      color: #888;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      min-width: 70px;
+      padding-top: 0.2rem;
+    }
+    .outline-item .content {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      padding: 0.2rem 0;
+      resize: vertical;
+      min-height: 1.6em;
+      line-height: 1.5;
+      width: 100%;
+      font-family: inherit;
+    }
+    .outline-item .content:focus {
+      outline: none;
+      background: #252525;
+      border-radius: 4px;
+      padding: 0.2rem 0.4rem;
+    }
+    .example-topics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0.5rem 0 1.5rem;
+    }
+    .example-btn {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      color: #ccc;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      flex: 0 1 auto;
+    }
+    .example-btn:hover {
+      background: #2a2a2a;
+      border-color: #4fc3f7;
+    }
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+    }
+    .footer a {
+      color: #4fc3f7;
+      text-decoration: none;
+    }
+    .footer a:hover { text-decoration: underline; }
+    .placeholder-note {
+      color: #666;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      font-style: italic;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1.2rem; }
+      h1 { font-size: 1.5rem; }
+      .controls > div { flex: 1 1 100%; }
+      .btn-group button { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>AI Essay Outline Generator</h1>
+  <div class="subhead">Structure your essay instantly — editable, copy, or download</div>
+
+  <!-- Example topics -->
+  <div class="example-topics">
+    <span style="color:#888;font-size:0.8rem;align-self:center;">Try an example:</span>
+    <button class="example-btn" data-topic="The impact of social media on mental health">Social media &amp; mental health</button>
+    <button class="example-btn" data-topic="Should college education be free?">Free college education</button>
+    <button class="example-btn" data-topic="The role of artificial intelligence in modern healthcare">AI in healthcare</button>
+    <button class="example-btn" data-topic="Climate change: causes, effects, and solutions">Climate change</button>
+    <button class="example-btn" data-topic="The importance of learning a second language">Learning a second language</button>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div>
+      <label for="topic">Essay topic / thesis</label>
+      <input type="text" id="topic" placeholder="e.g. Impact of social media on mental health" value="The impact of social media on mental health">
+    </div>
+    <div>
+      <label for="essayType">Essay type</label>
+      <select id="essayType">
+        <option value="argumentative">Argumentative</option>
+        <option value="expository">Expository</option>
+        <option value="narrative">Narrative</option>
+        <option value="persuasive">Persuasive</option>
+        <option value="compare-contrast">Compare / Contrast</option>
+        <option value="descriptive">Descriptive</option>
+      </select>
+    </div>
+    <div>
+      <label for="paragraphs">Body paragraphs (3–7)</label>
+      <select id="paragraphs">
+        <option>3</option><option>4</option><option>5</option><option>6</option><option>7</option>
+      </select>
+    </div>
+    <div style="flex:0 0 auto; min-width:100px;">
+      <button id="generateBtn" style="height:100%;">Generate Outline</button>
+    </div>
+  </div>
+
+  <!-- Outline output area -->
+  <div id="outlineContainer"></div>
+
+  <!-- Action buttons (shown after generation) -->
+  <div class="btn-group" id="actionButtons" style="display:none;">
+    <button id="copyBtn">📋 Copy Outline</button>
+    <button id="downloadBtn">⬇️ Download as TXT</button>
+  </div>
+
+  <div class="footer">
+    <a href="https://writingassistant.org/">writingassistant.org</a> — AI-powered writing tools
+  </div>
+</div>
+
+<script>
+  (function() {
+    "use strict";
+
+    // ----- Contextual placeholder generator -----
+    function generatePlaceholders(essayType, topic, numBody) {
+      // Normalize type
+      const type = essayType.toLowerCase().replace(/[^a-z]/g, '');
+      const t = topic || 'your topic';
+
+      // Hook variations
+      const hooks = {
+        argumentative: `The debate over ${t} has never been more urgent.`,
+        expository: `Understanding ${t} requires examining key facts and data.`,
+        narrative: `I still remember the first time I encountered ${t}.`,
+        persuasive: `Imagine a world where ${t} is no longer ignored.`,
+        comparecontrast: `At first glance, ${t} seems straightforward, but a closer look reveals surprising similarities and differences.`,
+        descriptive: `The scene surrounding ${t} is vivid and complex.`
+      };
+      const hook = hooks[type] || `The topic of ${t} deserves careful analysis.`;
+
+      // Background
+      const bg = `Recent discussions have highlighted the importance of ${t} in today's society.`;
+
+      // Thesis
+      const thesisMap = {
+        argumentative: `This essay argues that ${t} has a profound impact on individuals and communities, and that action is needed.`,
+        expository: `This essay explains the key aspects of ${t}, including its origins, development, and implications.`,
+        narrative: `This essay recounts a personal journey through ${t} and the lessons learned along the way.`,
+        persuasive: `It is time to embrace the benefits of ${t} and take decisive steps toward positive change.`,
+        comparecontrast: `By comparing and contrasting the different facets of ${t}, we gain a clearer understanding of its true nature.`,
+        descriptive: `Through vivid description, this essay brings ${t} to life, revealing its hidden details.`
+      };
+      const thesis = thesisMap[type] || `This essay explores ${t} in depth.`;
+
+      // Body paragraphs
+      const bodyParagraphs = [];
+      const topicStems = {
+        argumentative: ['Evidence supports that', 'Critics argue that', 'Further analysis shows', 'Another key point is', 'Moreover,', 'Additionally,', 'Finally,'],
+        expository: ['First,', 'Second,', 'Third,', 'Next,', 'Another aspect is', 'In addition,', 'Lastly,'],
+        narrative: ['The journey began when', 'Then,', 'After that,', 'Suddenly,', 'Eventually,', 'In the end,', 'Reflecting back,'],
+        persuasive: ['One compelling reason is', 'Another reason to act is', 'Moreover,', 'Furthermore,', 'Equally important,', 'Finally,', 'Above all,'],
+        comparecontrast: ['One similarity is', 'A key difference is', 'Another commonality is', 'In contrast,', 'Similarly,', 'On the other hand,', 'Both share'],
+        descriptive: ['The first detail that strikes you is', 'Next, the eye is drawn to', 'The texture of', 'The sound of', 'The smell of', 'The overall impression is', 'A closer look reveals']
+      };
+      const stems = topicStems[type] || topicStems.argumentative;
+
+      for (let i = 0; i < numBody; i++) {
+        const stem = stems[i % stems.length];
+        const topicSentence = `${stem} ${t} plays a crucial role in understanding the broader picture.`;
+        const evidence = [
+          `Research by experts confirms that ${t} affects millions of people worldwide.`,
+          `Case studies illustrate the real-world impact of ${t}.`,
+          `Statistical data reveals significant trends related to ${t}.`
+        ];
+        const analysis = `This evidence demonstrates that ${t} is not only relevant but also essential to consider in modern discourse.`;
+        const transition = (i < numBody - 1) ? `Building on this, the next section examines another dimension of ${t}.` : `Taken together, these points form a comprehensive view of ${t}.`;
+        bodyParagraphs.push({ topicSentence, evidence, analysis, transition });
+      }
+
+      // Conclusion
+      const restate = `In conclusion, ${t} remains a pivotal topic that demands attention.`;
+      const summary = `This essay has explored the key aspects of ${t}, from its foundational ideas to its broader implications.`;
+      const callToActionMap = {
+        argumentative: `It is time to advocate for change and address ${t} with the urgency it deserves.`,
+        expository: `Further research into ${t} will continue to illuminate its complexities.`,
+        narrative: `May this story inspire others to reflect on their own experiences with ${t}.`,
+        persuasive: `Let us take action now to embrace the potential of ${t}.`,
+        comparecontrast: `Understanding both sides of ${t} helps us make more informed decisions.`,
+        descriptive: `Next time you encounter ${t}, take a moment to appreciate its richness.`
+      };
+      const callToAction = callToActionMap[type] || `Consider how ${t} affects your own life and community.`;
+
+      return { hook, background: bg, thesis, bodyParagraphs, restate, summary, callToAction };
+    }
+
+    // ----- Render outline -----
+    function renderOutline(data, topic) {
+      const container = document.getElementById('outlineContainer');
+      let html = '';
+
+      // Introduction
+      html += `<div class="outline-section"><h2>📖 Introduction</h2>`;
+      html += renderItem('Hook', data.hook);
+      html += renderItem('Background', data.background);
+      html += renderItem('Thesis Statement', data.thesis);
+      html += `</div>`;
+
+      // Body paragraphs
+      data.bodyParagraphs.forEach((bp, idx) => {
+        html += `<div class="outline-section"><h2>📝 Body Paragraph ${idx+1}</h2>`;
+        html += renderItem('Topic Sentence', bp.topicSentence);
+        bp.evidence.forEach((ev, ei) => {
+          html += renderItem(`Evidence ${ei+1}`, ev);
+        });
+        html += renderItem('Analysis', bp.analysis);
+        html += renderItem('Transition', bp.transition);
+        html += `</div>`;
+      });
+
+      // Conclusion
+      html += `<div class="outline-section"><h2>🔚 Conclusion</h2>`;
+      html += renderItem('Restate Thesis', data.restate);
+      html += renderItem('Summary', data.summary);
+      html += renderItem('Call to Action', data.callToAction);
+      html += `</div>`;
+
+      html += `<div class="placeholder-note">✏️ Click any text to edit it directly. Your changes stay until you generate a new outline.</div>`;
+      container.innerHTML = html;
+
+      // Show action buttons
+      document.getElementById('actionButtons').style.display = 'flex';
+    }
+
+    function renderItem(label, text) {
+      // Use textarea for multiline, but make it look like contenteditable
+      return `<div class="outline-item"><span class="label">${label}</span><textarea class="content" rows="1">${escapeHtml(text)}</textarea></div>`;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ----- Generate outline -----
+    function generate() {
+      const topic = document.getElementById('topic').value.trim() || 'your topic';
+      const essayType = document.getElementById('essayType').value;
+      const numBody = parseInt(document.getElementById('paragraphs').value, 10);
+      const data = generatePlaceholders(essayType, topic, numBody);
+      renderOutline(data, topic);
+      // Auto-resize textareas
+      document.querySelectorAll('.content').forEach(ta => autoResize(ta));
+    }
+
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = (el.scrollHeight) + 'px';
+    }
+
+    // ----- Copy outline -----
+    function copyOutline() {
+      const items = document.querySelectorAll('.outline-item');
+      let text = '';
+      let currentSection = '';
+      const sections = document.querySelectorAll('.outline-section');
+      sections.forEach(sec => {
+        const heading = sec.querySelector('h2');
+        if (heading) text += heading.textContent + '\n';
+        const items = sec.querySelectorAll('.outline-item');
+        items.forEach(item => {
+          const label = item.querySelector('.label');
+          const content = item.querySelector('.content');
+          if (label && content) {
+            text += `${label.textContent}: ${content.value}\n`;
+          }
+        });
+        text += '\n';
+      });
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copyBtn');
+        const orig = btn.textContent;
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => btn.textContent = orig, 1500);
+      }).catch(() => alert('Could not copy. Please select and copy manually.'));
+    }
+
+    // ----- Download as TXT -----
+    function downloadTxt() {
+      const items = document.querySelectorAll('.outline-item');
+      let text = 'ESSAY OUTLINE\n\n';
+      const sections = document.querySelectorAll('.outline-section');
+      sections.forEach(sec => {
+        const heading = sec.querySelector('h2');
+        if (heading) text += heading.textContent + '\n';
+        const items = sec.querySelectorAll('.outline-item');
+        items.forEach(item => {
+          const label = item.querySelector('.label');
+          const content = item.querySelector('.content');
+          if (label && content) {
+            text += `${label.textContent}: ${content.value}\n`;
+          }
+        });
+        text += '\n';
+      });
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'essay-outline.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ----- Event listeners -----
+    document.addEventListener('DOMContentLoaded', function() {
+      // Generate on load with default topic
+      generate();
+
+      document.getElementById('generateBtn').addEventListener('click', generate);
+
+      // Example topic buttons
+      document.querySelectorAll('.example-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.getElementById('topic').value = this.getAttribute('data-topic');
+          generate();
+        });
+      });
+
+      document.getElementById('copyBtn').addEventListener('click', copyOutline);
+      document.getElementById('downloadBtn').addEventListener('click', downloadTxt);
+
+      // Auto-resize on input
+      document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('content')) {
+          autoResize(e.target);
+        }
+      });
+
+      // Also resize on window resize
+      window.addEventListener('resize', function() {
+        document.querySelectorAll('.content').forEach(ta => autoResize(ta));
+      });
+    });
+
+  })();
+</script>
+</body>
+</html>

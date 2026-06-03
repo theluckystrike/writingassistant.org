@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thesis Statement Generator — Create Strong Thesis Statements</title>
+  <meta name="description" content="Generate strong, academic thesis statements for argumentative, analytical, and expository essays. Free interactive tool with examples.">
+  <link rel="canonical" href="https://writingassistant.org/thesis-statement-generator">
+  <meta name="theme-color" content="#0a0a0a">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem;
+    }
+    .container {
+      max-width: 1100px;
+      width: 100%;
+    }
+    header, footer {
+      text-align: center;
+      width: 100%;
+    }
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+      color: #f5f5f5;
+    }
+    header p {
+      color: #9e9e9e;
+      margin-bottom: 1.2rem;
+      font-size: 1.05rem;
+    }
+    .tool-card {
+      background: #141414;
+      border-radius: 28px;
+      padding: 2rem 1.8rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      border: 1px solid #2a2a2a;
+      margin: 1.2rem 0;
+    }
+    .form-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 1.8rem;
+    }
+    .form-group {
+      flex: 1 1 200px;
+      min-width: 160px;
+    }
+    .form-group.full {
+      flex: 1 1 100%;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #aaa;
+      margin-bottom: 0.3rem;
+      font-weight: 500;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      color: #e0e0e0;
+      padding: 0.7rem 0.9rem;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      transition: border 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #4fc3f7;
+      box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.25);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 58px;
+    }
+    .btn {
+      background: #2a2a2a;
+      border: none;
+      color: #e0e0e0;
+      padding: 0.7rem 1.5rem;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid #3a3a3a;
+    }
+    .btn-primary {
+      background: #0d3b4f;
+      border-color: #4fc3f7;
+      color: #e0f7ff;
+    }
+    .btn-primary:hover {
+      background: #145b77;
+      border-color: #81d4fa;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #4fc3f7;
+      color: #b3e5fc;
+    }
+    .btn-outline:hover {
+      background: #1a2f3a;
+    }
+    .btn-sm {
+      padding: 0.3rem 1rem;
+      font-size: 0.8rem;
+      border-radius: 30px;
+    }
+    .results-area {
+      margin-top: 2rem;
+    }
+    .thesis-item {
+      background: #1a1a1a;
+      border-left: 4px solid #4fc3f7;
+      padding: 1.2rem 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .thesis-text {
+      font-size: 1.05rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #f0f0f0;
+    }
+    .thesis-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.6rem;
+      gap: 0.5rem 1rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-strong {
+      background: #1b5e20;
+      color: #a5d6a7;
+    }
+    .badge-moderate {
+      background: #7c5a00;
+      color: #ffe082;
+    }
+    .badge-weak {
+      background: #6d1a1a;
+      color: #ef9a9a;
+    }
+    .tip {
+      font-size: 0.8rem;
+      color: #b0bec5;
+      margin-left: 0.5rem;
+      font-style: italic;
+    }
+    .copy-btn {
+      background: transparent;
+      border: 1px solid #444;
+      color: #b0bec5;
+      padding: 0.2rem 1rem;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .copy-btn:hover {
+      background: #2a2a2a;
+      color: #e0e0e0;
+      border-color: #4fc3f7;
+    }
+    .examples-section {
+      margin-top: 2rem;
+    }
+    .example-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.8rem;
+      margin-top: 0.5rem;
+    }
+    .example-topic {
+      background: #1a1a1a;
+      padding: 0.6rem 1rem;
+      border-radius: 40px;
+      border: 1px solid #2a2a2a;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.15s;
+      text-align: center;
+    }
+    .example-topic:hover {
+      background: #222;
+      border-color: #4fc3f7;
+      color: #b3e5fc;
+    }
+    .faq-item {
+      background: #111;
+      border-radius: 16px;
+      padding: 1rem 1.4rem;
+      margin: 0.6rem 0;
+      border-left: 2px solid #2a2a2a;
+    }
+    .faq-question {
+      font-weight: 500;
+      color: #e0e0e0;
+    }
+    .faq-answer {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-top: 0.2rem;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding: 1rem 0;
+      border-top: 1px solid #1e1e1e;
+      font-size: 0.9rem;
+    }
+    footer a {
+      color: #4fc3f7;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+    .hidden {
+      display: none;
+    }
+    hr {
+      border: 0.5px solid #222;
+      margin: 1.5rem 0;
+    }
+    @media (max-width: 600px) {
+      .tool-card { padding: 1.5rem 1rem; }
+      header h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>✍️ Thesis Statement Generator</h1>
+    <p>Create strong, academic thesis statements for any essay</p>
+  </header>
+
+  <!-- BreadcrumbList schema + WebApplication + FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Thesis Statement Generator",
+    "url": "https://writingassistant.org/thesis-statement-generator",
+    "description": "Generate strong thesis statements for argumentative, analytical, and expository essays.",
+    "applicationCategory": "Educational Application",
+    "operatingSystem": "Web",
+    "browserRequirements": "JavaScript"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Writing Assistant", "item": "https://writingassistant.org/" },
+      { "@type": "ListItem", "position": 2, "name": "Thesis Statement Generator", "item": "https://writingassistant.org/thesis-statement-generator" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "How do I use the thesis generator?", "acceptedAnswer": { "@type": "Answer", "text": "Enter your topic, choose essay type, add your position and up to 3 supporting reasons. Click generate to see thesis variations with strength ratings." } },
+      { "@type": "Question", "name": "What essay types are supported?", "acceptedAnswer": { "@type": "Answer", "text": "Argumentative, analytical, and expository. Each uses specific templates." } }
+    ]
+  }
+  </script>
+
+  <div class="tool-card">
+    <form id="thesisForm" class="form-grid">
+      <div class="form-group"><label>📌 Topic *</label><input type="text" id="topic" placeholder="e.g., social media" required></div>
+      <div class="form-group"><label>📖 Essay type *</label>
+        <select id="essayType">
+          <option value="argumentative">Argumentative</option>
+          <option value="analytical">Analytical</option>
+          <option value="expository">Expository</option>
+        </select>
+      </div>
+      <div class="form-group"><label>🎯 Your position / argument *</label><input type="text" id="position" placeholder="e.g., should be regulated" required></div>
+      <div class="form-group full" style="display: flex; flex-wrap: wrap; gap: 1rem;">
+        <div style="flex:1; min-width:120px;"><label>① Reason (optional)</label><input type="text" id="reason1" placeholder="e.g., reduces misinformation"></div>
+        <div style="flex:1; min-width:120px;"><label>② Reason (optional)</label><input type="text" id="reason2" placeholder="e.g., protects privacy"></div>
+        <div style="flex:1; min-width:120px;"><label>③ Reason (optional)</label><input type="text" id="reason3" placeholder="e.g., encourages accountability"></div>
+      </div>
+      <div class="form-group full" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+        <button type="submit" class="btn btn-primary" style="flex:1; min-width:130px;">⚡ Generate theses</button>
+        <button type="button" id="clearBtn" class="btn btn-outline" style="flex:0.4;">Clear</button>
+      </div>
+    </form>
+
+    <div id="resultsContainer" class="results-area">
+      <div style="text-align: center; padding: 1.5rem 0; color: #666;">Fill in the fields and click Generate</div>
+    </div>
+  </div>
+
+  <!-- 10 example topics -->
+  <div class="examples-section">
+    <h3 style="font-weight: 400; color: #ccc;">📋 Example topics (click to load)</h3>
+    <div class="example-grid" id="exampleGrid"></div>
+  </div>
+
+  <!-- FAQ + Footer -->
+  <div style="margin: 2rem 0 1rem;">
+    <div class="faq-item"><div class="faq-question">❓ How does the strength rating work?</div><div class="faq-answer">Based on structure, counterargument presence, and reason specificity. Strong theses include a counterargument and 2+ reasons.</div></div>
+    <div class="faq-item"><div class="faq-question">❓ Can I edit the generated thesis?</div><div class="faq-answer">Yes! Use the copy button and paste into your editor. Each thesis includes tips to improve.</div></div>
+  </div>
+
+  <footer>
+    <p>© Writing Assistant — <a href="https://writingassistant.org/">writingassistant.org</a></p>
+  </footer>
+</div>
+
+<script>
+  (function() {
+    const form = document.getElementById('thesisForm');
+    const topicInput = document.getElementById('topic');
+    const essayType = document.getElementById('essayType');
+    const positionInput = document.getElementById('position');
+    const r1 = document.getElementById('reason1');
+    const r2 = document.getElementById('reason2');
+    const r3 = document.getElementById('reason3');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const clearBtn = document.getElementById('clearBtn');
+
+    // 10 example topics with pre-generated data
+    const examples = [
+      { topic: 'Social media', type: 'argumentative', position: 'should be regulated', reasons: ['reduces misinformation', 'protects privacy', 'encourages accountability'] },
+      { topic: 'Remote work', type: 'argumentative', position: 'benefits productivity', reasons: ['flexible schedule', 'less commute', 'improved morale'] },
+      { topic: 'College education', type: 'expository', position: 'remains valuable', reasons: ['higher earnings', 'critical thinking', 'networking'] },
+      { topic: 'Artificial intelligence', type: 'analytical', position: 'transforms healthcare', reasons: ['diagnosis accuracy', 'personalized treatment', 'administrative efficiency'] },
+      { topic: 'Climate change', type: 'argumentative', position: 'requires immediate action', reasons: ['rising sea levels', 'extreme weather', 'biodiversity loss'] },
+      { topic: 'School uniforms', type: 'argumentative', position: 'promote equality', reasons: ['reduce peer pressure', 'improve focus', 'school pride'] },
+      { topic: 'Gun control', type: 'analytical', position: 'reduces violence', reasons: ['background checks', 'mental health screening', 'safe storage'] },
+      { topic: 'Fast fashion', type: 'expository', position: 'harms environment', reasons: ['water pollution', 'textile waste', 'carbon emissions'] },
+      { topic: 'Video games', type: 'analytical', position: 'improve cognitive skills', reasons: ['problem solving', 'hand-eye coordination', 'strategic thinking'] },
+      { topic: 'Vegetarian diet', type: 'expository', position: 'offers health benefits', reasons: ['lower cholesterol', 'weight management', 'reduced disease risk'] }
+    ];
+
+    // render example grid
+    const exampleGrid = document.getElementById('exampleGrid');
+    examples.forEach((ex, idx) => {
+      const btn = document.createElement('div');
+      btn.className = 'example-topic';
+      btn.textContent = ex.topic;
+      btn.addEventListener('click', () => {
+        topicInput.value = ex.topic;
+        essayType.value = ex.type;
+        positionInput.value = ex.position;
+        r1.value = ex.reasons[0] || '';
+        r2.value = ex.reasons[1] || '';
+        r3.value = ex.reasons[2] || '';
+        // auto generate
+        generateTheses();
+      });
+      exampleGrid.appendChild(btn);
+    });
+
+    // templates per type
+    function getTemplates(type) {
+      if (type === 'argumentative') {
+        return [
+          { pattern: 'Although {counter}, {topic} {position} because {r1}, {r2}, and {r3}.', needsCounter: true, needsReasons: 3 },
+          { pattern: '{topic} {position} because {r1} and {r2}.', needsCounter: false, needsReasons: 2 },
+          { pattern: 'While some argue that {counter}, {topic} {position} due to {r1} and {r2}.', needsCounter: true, needsReasons: 2 },
+          { pattern: '{topic} must {position} in order to {r1}, {r2}, and {r3}.', needsCounter: false, needsReasons: 3 },
+          { pattern: 'Despite {counter}, {topic} {position} as {r1} and {r2} demonstrate.', needsCounter: true, needsReasons: 2 }
+        ];
+      } else if (type === 'analytical') {
+        return [
+          { pattern: 'Through an analysis of {topic}, this essay reveals {position} via {r1}, {r2}, and {r3}.', needsCounter: false, needsReasons: 3 },
+          { pattern: 'Examining {topic} shows that {position} is driven by {r1} and {r2}.', needsCounter: false, needsReasons: 2 },
+          { pattern: 'Although {counter}, a closer look at {topic} indicates {position} because of {r1}.', needsCounter: true, needsReasons: 1 },
+          { pattern: '{topic} illustrates {position} through {r1}, {r2}, and {r3}.', needsCounter: false, needsReasons: 3 },
+          { pattern: 'By analyzing {topic}, we see {position} shaped by {r1} and {r2}.', needsCounter: false, needsReasons: 2 }
+        ];
+      } else { // expository
+        return [
+          { pattern: '{topic} {position} because {r1}, {r2}, and {r3}.', needsCounter: false, needsReasons: 3 },
+          { pattern: 'The concept of {topic} {position} mainly due to {r1} and {r2}.', needsCounter: false, needsReasons: 2 },
+          { pattern: 'Understanding {topic} requires recognizing {position} through {r1}, {r2}, and {r3}.', needsCounter: false, needsReasons: 3 },
+          { pattern: '{topic} {position} as shown by {r1} and {r2}.', needsCounter: false, needsReasons: 2 },
+          { pattern: 'An overview of {topic} demonstrates {position} via {r1}, {r2}, and {r3}.', needsCounter: false, needsReasons: 3 }
+        ];
+      }
+    }
+
+    // generate variations
+    function generateTheses() {
+      const topic = topicInput.value.trim();
+      const type = essayType.value;
+      const position = positionInput.value.trim();
+      const reasons = [r1.value.trim(), r2.value.trim(), r3.value.trim()].filter(r => r !== '');
+
+      if (!topic || !position) {
+        resultsContainer.innerHTML = `<div style="padding:1.5rem; color:#ef9a9a; text-align:center;">⚠️ Please fill in topic and position.</div>`;
+        return;
+      }
+
+      const templates = getTemplates(type);
+      const counterarguments = ['opponents claim the opposite', 'some disagree', 'critics argue differently', 'there are opposing views', 'not everyone agrees'];
+      const results = [];
+
+      // generate up to 5 theses
+      for (let i = 0; i < templates.length; i++) {
+        const tmpl = templates[i];
+        let counter = counterarguments[Math.floor(Math.random() * counterarguments.length)];
+        // use available reasons
+        let usedReasons = [...reasons];
+        // if template needs more reasons than provided, pad with generic
+        while (usedReasons.length < tmpl.needsReasons) {
+          usedReasons.push('key factor');
+        }
+        // trim to needed count
+        usedReasons = usedReasons.slice(0, tmpl.needsReasons);
+        // if needs counter but no reason slot? still ok
+        let thesis = tmpl.pattern
+          .replace('{topic}', topic)
+          .replace('{position}', position)
+          .replace('{counter}', counter)
+          .replace('{r1}', usedReasons[0] || 'significant reason')
+          .replace('{r2}', usedReasons[1] || 'another reason')
+          .replace('{r3}', usedReasons[2] || 'additional reason');
+        // clean up extra spaces
+        thesis = thesis.replace(/\s+/g, ' ').trim();
+        // strength rating
+        let strength = 'weak';
+        let tip = '';
+        const hasCounter = thesis.toLowerCase().includes('although') || thesis.toLowerCase().includes('while') || thesis.toLowerCase().includes('despite') || thesis.toLowerCase().includes('opponents');
+        const reasonCount = (thesis.match(/because|due to|as|via|through|by/gi) || []).length;
+        if (hasCounter && reasons.length >= 2) { strength = 'strong'; tip = 'Clear position with counterargument and solid reasons.'; }
+        else if (hasCounter || reasons.length >= 2) { strength = 'moderate'; tip = 'Add a counterargument or more specific reasons to strengthen.'; }
+        else { strength = 'weak'; tip = 'Include a counterargument and at least two supporting reasons.'; }
+
+        results.push({ thesis, strength, tip });
+      }
+
+      // render
+      let html = `<h3 style="margin-bottom: 1rem; font-weight: 400;">✨ Generated Theses (${results.length})</h3>`;
+      results.forEach((r, idx) => {
+        const badgeClass = r.strength === 'strong' ? 'badge-strong' : (r.strength === 'moderate' ? 'badge-moderate' : 'badge-weak');
+        html += `<div class="thesis-item">
+          <div class="thesis-text">${r.thesis}</div>
+          <div class="thesis-meta">
+            <span><span class="badge ${badgeClass}">${r.strength}</span><span class="tip">💡 ${r.tip}</span></span>
+            <button class="copy-btn" data-copy="${encodeURIComponent(r.thesis)}">📋 Copy</button>
+          </div>
+        </div>`;
+      });
+      resultsContainer.innerHTML = html;
+
+      // copy functionality
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          const text = decodeURIComponent(this.dataset.copy);
+          navigator.clipboard.writeText(text).then(() => {
+            const orig = this.textContent;
+            this.textContent = '✅ Copied!';
+            setTimeout(() => { this.textContent = orig; }, 1800);
+          }).catch(() => {
+            // fallback
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            this.textContent = '✅ Copied!';
+            setTimeout(() => { this.textContent = '📋 Copy'; }, 1800);
+          });
+        });
+      });
+    }
+
+    // form submit
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      generateTheses();
+    });
+
+    clearBtn.addEventListener('click', function() {
+      topicInput.value = '';
+      positionInput.value = '';
+      r1.value = ''; r2.value = ''; r3.value = '';
+      essayType.value = 'argumentative';
+      resultsContainer.innerHTML = `<div style="text-align: center; padding: 1.5rem 0; color: #666;">Fill in the fields and click Generate</div>`;
+    });
+
+    // if any example auto-generates on load? we already have click listener.
+    // also generate on first load? optional: generate with first example? not needed.
+
+    // prefill with first example for demo
+    window.addEventListener('load', function() {
+      // set first example as default
+      const first = examples[0];
+      topicInput.value = first.topic;
+      essayType.value = first.type;
+      positionInput.value = first.position;
+      r1.value = first.reasons[0] || '';
+      r2.value = first.reasons[1] || '';
+      r3.value = first.reasons[2] || '';
+      generateTheses();
+    });
+  })();
+</script>
+</body>
+</html>

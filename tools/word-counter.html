@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Counter & Text Statistics — Detailed Analysis</title>
+  <meta name="description" content="Real‑time word, character, sentence, paragraph counts, reading time, vocabulary density, frequency & length distributions.">
+  <link rel="canonical" href="https://writingassistant.org/word-counter">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #0a0a0a;
+      color: #e0e0e0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      line-height: 1.5;
+      padding: 1.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+      color: #f0f0f0;
+    }
+    .subhead {
+      color: #9e9e9e;
+      margin-bottom: 1.8rem;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .shortcuts-hint {
+      font-size: 0.85rem;
+      background: #1e1e1e;
+      padding: 0.3rem 0.9rem;
+      border-radius: 30px;
+      color: #b0b0b0;
+      border: 1px solid #333;
+    }
+    .shortcuts-hint kbd {
+      background: #2a2a2a;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      border: 1px solid #444;
+      color: #cfcfcf;
+    }
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 12px;
+      color: #e0e0e0;
+      font-size: 1rem;
+      padding: 1.2rem;
+      resize: vertical;
+      transition: border 0.2s;
+      font-family: inherit;
+      line-height: 1.6;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #4fc3f7;
+      box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.2);
+    }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+      margin: 1.8rem 0 1.5rem;
+    }
+    .stat-card {
+      background: #141414;
+      border-radius: 14px;
+      padding: 0.9rem 1rem;
+      border: 1px solid #2a2a2a;
+      transition: background 0.2s;
+    }
+    .stat-card:hover {
+      background: #1c1c1c;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #9e9e9e;
+    }
+    .stat-value {
+      font-size: 1.7rem;
+      font-weight: 500;
+      color: #f5f5f5;
+      line-height: 1.2;
+      margin-top: 0.1rem;
+      word-break: break-all;
+    }
+    .stat-value small {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: #aaa;
+      margin-left: 0.2rem;
+    }
+    .accent {
+      color: #4fc3f7;
+    }
+    .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin: 1.8rem 0 1rem;
+    }
+    .dist-box {
+      flex: 1 1 280px;
+      background: #111;
+      border-radius: 16px;
+      padding: 1.2rem 1.2rem 1.5rem;
+      border: 1px solid #2a2a2a;
+    }
+    .dist-box h3 {
+      font-weight: 400;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: #c0c0c0;
+      letter-spacing: 0.02em;
+    }
+    .bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+    .bar-label {
+      width: 2.2rem;
+      text-align: right;
+      color: #b0b0b0;
+      flex-shrink: 0;
+    }
+    .bar-track {
+      flex: 1;
+      background: #2a2a2a;
+      height: 14px;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      background: #4fc3f7;
+      border-radius: 20px;
+      transition: width 0.2s ease;
+    }
+    .bar-count {
+      width: 2.2rem;
+      color: #bbb;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+      text-align: left;
+    }
+    .word-frequency {
+      margin: 1.8rem 0 1rem;
+      background: #111;
+      border-radius: 16px;
+      padding: 1.2rem 1.5rem 1.5rem;
+      border: 1px solid #2a2a2a;
+    }
+    .word-frequency h3 {
+      font-weight: 400;
+      font-size: 1rem;
+      margin-bottom: 0.8rem;
+      color: #c0c0c0;
+    }
+    .freq-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.2rem;
+      list-style: none;
+    }
+    .freq-list li {
+      background: #1e1e1e;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      border: 1px solid #333;
+      font-size: 0.9rem;
+    }
+    .freq-list li span {
+      color: #4fc3f7;
+      font-weight: 500;
+      margin-left: 0.3rem;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid #222;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+    }
+    footer a {
+      color: #b0b0b0;
+      text-decoration: none;
+      border-bottom: 1px solid #3a3a3a;
+    }
+    footer a:hover {
+      color: #4fc3f7;
+      border-color: #4fc3f7;
+    }
+    .copy-stats-msg {
+      font-size: 0.8rem;
+      color: #4fc3f7;
+      margin-left: 1rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .copy-stats-msg.show {
+      opacity: 1;
+    }
+    @media (max-width: 600px) {
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stat-value {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Word Counter & Text Statistics</h1>
+    <div class="subhead">
+      <span>Detailed real‑time analysis</span>
+      <span class="shortcuts-hint">
+        <kbd>Ctrl+A</kbd> select all · <kbd>Ctrl+Shift+C</kbd> copy stats
+      </span>
+    </div>
+  </header>
+
+  <textarea id="textInput" placeholder="Type or paste your text here …" aria-label="Text input for analysis"></textarea>
+
+  <!-- main stats -->
+  <div class="stat-grid" id="statsGrid">
+    <div class="stat-card"><div class="stat-label">Words</div><div class="stat-value" id="wordCount">0</div></div>
+    <div class="stat-card"><div class="stat-label">Characters (with spaces)</div><div class="stat-value" id="charWithSpaces">0</div></div>
+    <div class="stat-card"><div class="stat-label">Characters (no spaces)</div><div class="stat-value" id="charNoSpaces">0</div></div>
+    <div class="stat-card"><div class="stat-label">Sentences</div><div class="stat-value" id="sentenceCount">0</div></div>
+    <div class="stat-card"><div class="stat-label">Paragraphs</div><div class="stat-value" id="paragraphCount">0</div></div>
+    <div class="stat-card"><div class="stat-label">Avg. word length</div><div class="stat-value" id="avgWordLength">0</div></div>
+    <div class="stat-card"><div class="stat-label">Avg. sentence length</div><div class="stat-value" id="avgSentenceLength">0</div></div>
+    <div class="stat-card"><div class="stat-label">Reading time (200 wpm)</div><div class="stat-value" id="readingTime">0 <small>min</small></div></div>
+    <div class="stat-card"><div class="stat-label">Speaking time (130 wpm)</div><div class="stat-value" id="speakingTime">0 <small>min</small></div></div>
+    <div class="stat-card"><div class="stat-label">Unique words</div><div class="stat-value" id="uniqueWords">0</div></div>
+    <div class="stat-card"><div class="stat-label">Vocabulary density</div><div class="stat-value" id="vocabDensity">0%</div></div>
+  </div>
+
+  <!-- frequency + distributions -->
+  <div class="word-frequency" id="freqBox">
+    <h3>🔤 Top 10 most frequent words (excl. stop words)</h3>
+    <ul class="freq-list" id="freqList"><li>Type something to see frequencies</li></ul>
+  </div>
+
+  <div class="flex-row">
+    <div class="dist-box" id="wordLengthDist">
+      <h3>📊 Word length distribution</h3>
+      <div class="bar-container" id="wordLengthBars"></div>
+    </div>
+    <div class="dist-box" id="sentenceLengthDist">
+      <h3>📊 Sentence length distribution</h3>
+      <div class="bar-container" id="sentenceLengthBars"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p><a href="https://writingassistant.org/" target="_blank">writingassistant.org</a> — comprehensive text analysis tool</p>
+  </footer>
+</div>
+
+<script>
+  (function() {
+    const textarea = document.getElementById('textInput');
+    // stop words list (common English)
+    const stopWords = new Set([
+      'the','a','an','is','am','are','was','were','be','been','being','have','has','had','do','does','did','will','would',
+      'shall','should','may','might','must','can','could','i','you','he','she','it','we','they','me','him','her','us','them',
+      'my','your','his','its','our','their','mine','yours','hers','ours','theirs','this','that','these','those','and','but',
+      'or','nor','not','no','nor','so','if','then','else','when','where','why','how','which','who','whom','what','all','each',
+      'every','both','few','more','most','some','any','none','one','two','other','another','such','only','own','same','too',
+      'very','just','because','as','until','while','of','in','on','to','for','with','by','from','at','into','through','during',
+      'before','after','above','below','between','out','off','over','under','again','further','then','once','here','there',
+      'about','up','down','than','also','per','itself','themselves','myself','yourself','himself','herself','ourselves'
+    ]);
+
+    // DOM refs
+    const wordCountEl = document.getElementById('wordCount');
+    const charWithSpacesEl = document.getElementById('charWithSpaces');
+    const charNoSpacesEl = document.getElementById('charNoSpaces');
+    const sentenceCountEl = document.getElementById('sentenceCount');
+    const paragraphCountEl = document.getElementById('paragraphCount');
+    const avgWordLengthEl = document.getElementById('avgWordLength');
+    const avgSentenceLengthEl = document.getElementById('avgSentenceLength');
+    const readingTimeEl = document.getElementById('readingTime');
+    const speakingTimeEl = document.getElementById('speakingTime');
+    const uniqueWordsEl = document.getElementById('uniqueWords');
+    const vocabDensityEl = document.getElementById('vocabDensity');
+    const freqListEl = document.getElementById('freqList');
+    const wordLengthBarsEl = document.getElementById('wordLengthBars');
+    const sentenceLengthBarsEl = document.getElementById('sentenceLengthBars');
+
+    function analyze(text) {
+      // normalize line endings
+      const clean = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+      // paragraphs: split by double newline or more
+      const paragraphs = clean.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+      const paragraphCount = paragraphs.length;
+
+      // sentences: split by . ! ? but keep abbreviations simple
+      const sentences = clean.split(/[.!?]+/).filter(s => s.trim().length > 0);
+      const sentenceCount = sentences.length;
+
+      // words: any sequence of letters/digits/apostrophe/hyphen (basic)
+      const words = clean.match(/[a-zA-Z0-9\u00C0-\u024F']+(?:-[a-zA-Z0-9]+)*/g) || [];
+      const wordCount = words.length;
+
+      // characters
+      const charWithSpaces = clean.length;
+      const charNoSpaces = clean.replace(/\s/g, '').length;
+
+      // average word length
+      const totalWordLength = words.reduce((sum, w) => sum + w.length, 0);
+      const avgWordLength = wordCount > 0 ? (totalWordLength / wordCount) : 0;
+
+      // average sentence length (in words)
+      const sentenceWords = sentences.map(s => (s.match(/[a-zA-Z0-9\u00C0-\u024F']+(?:-[a-zA-Z0-9]+)*/g) || []).length);
+      const totalSentWords = sentenceWords.reduce((a, b) => a + b, 0);
+      const avgSentenceLength = sentenceCount > 0 ? (totalSentWords / sentenceCount) : 0;
+
+      // reading & speaking time (minutes)
+      const readingTime = wordCount > 0 ? (wordCount / 200) : 0;
+      const speakingTime = wordCount > 0 ? (wordCount / 130) : 0;
+
+      // unique words (case‑insensitive)
+      const lowerWords = words.map(w => w.toLowerCase());
+      const uniqueSet = new Set(lowerWords);
+      const uniqueWords = uniqueSet.size;
+      const vocabDensity = wordCount > 0 ? (uniqueWords / wordCount) : 0;
+
+      // top 10 frequent words excluding stop words
+      const freqMap = new Map();
+      for (const w of lowerWords) {
+        if (stopWords.has(w)) continue;
+        if (w.length === 0) continue;
+        freqMap.set(w, (freqMap.get(w) || 0) + 1);
+      }
+      const sortedFreq = [...freqMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+      // word length distribution (1‑letter, 2‑letter, … up to 15+)
+      const lengthDist = new Array(16).fill(0); // index 0 = 1-letter, 14 = 15+
+      for (const w of words) {
+        let len = w.length;
+        if (len >= 15) len = 15;
+        if (len > 0) lengthDist[len-1]++;
+      }
+
+      // sentence length distribution (words per sentence) up to 20+
+      const sentDist = new Array(21).fill(0); // 0 -> 1 word, 19 -> 20 words, 20 -> 21+
+      for (const sw of sentenceWords) {
+        let idx = sw - 1;
+        if (idx < 0) idx = 0;
+        if (idx >= 20) idx = 20;
+        sentDist[idx]++;
+      }
+
+      return {
+        wordCount,
+        charWithSpaces,
+        charNoSpaces,
+        sentenceCount,
+        paragraphCount,
+        avgWordLength,
+        avgSentenceLength,
+        readingTime,
+        speakingTime,
+        uniqueWords,
+        vocabDensity,
+        topFreq: sortedFreq,
+        wordLengthDist: lengthDist,
+        sentenceLengthDist: sentDist,
+        totalWords: wordCount
+      };
+    }
+
+    function renderStats(stats) {
+      wordCountEl.textContent = stats.wordCount;
+      charWithSpacesEl.textContent = stats.charWithSpaces;
+      charNoSpacesEl.textContent = stats.charNoSpaces;
+      sentenceCountEl.textContent = stats.sentenceCount;
+      paragraphCountEl.textContent = stats.paragraphCount;
+      avgWordLengthEl.textContent = stats.avgWordLength.toFixed(2);
+      avgSentenceLengthEl.textContent = stats.avgSentenceLength.toFixed(2);
+      readingTimeEl.innerHTML = stats.readingTime.toFixed(2) + ' <small>min</small>';
+      speakingTimeEl.innerHTML = stats.speakingTime.toFixed(2) + ' <small>min</small>';
+      uniqueWordsEl.textContent = stats.uniqueWords;
+      const density = stats.totalWords > 0 ? (stats.vocabDensity * 100) : 0;
+      vocabDensityEl.textContent = density.toFixed(1) + '%';
+
+      // top frequency
+      if (stats.topFreq.length === 0) {
+        freqListEl.innerHTML = '<li>No words (or only stop words)</li>';
+      } else {
+        freqListEl.innerHTML = stats.topFreq.map(([word, count]) =>
+          `<li>${word} <span>${count}</span></li>`
+        ).join('');
+      }
+
+      // word length bars (show 1..15)
+      const wMax = Math.max(...stats.wordLengthDist, 1);
+      wordLengthBarsEl.innerHTML = stats.wordLengthDist.map((count, idx) => {
+        const label = idx + 1;
+        const displayLabel = label <= 14 ? label : '15+';
+        const width = (count / wMax) * 100;
+        return `<div class="bar-row">
+          <span class="bar-label">${displayLabel}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div>
+          <span class="bar-count">${count}</span>
+        </div>`;
+      }).join('');
+
+      // sentence length bars (1..20+)
+      const sMax = Math.max(...stats.sentenceLengthDist, 1);
+      sentenceLengthBarsEl.innerHTML = stats.sentenceLengthDist.map((count, idx) => {
+        let label = idx + 1;
+        if (idx === 20) label = '21+';
+        const width = (count / sMax) * 100;
+        return `<div class="bar-row">
+          <span class="bar-label">${label}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div>
+          <span class="bar-count">${count}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function update() {
+      const text = textarea.value;
+      const stats = analyze(text);
+      renderStats(stats);
+    }
+
+    // keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Ctrl+A (or Cmd+A) select all
+      if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+        // only if textarea is focused? we allow global but only if not inside input? 
+        // we want to select textarea text
+        if (document.activeElement === textarea) {
+          e.preventDefault();
+          textarea.select();
+        }
+      }
+      // Ctrl+Shift+C copy stats
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault();
+        const stats = analyze(textarea.value);
+        const lines = [
+          `Words: ${stats.wordCount}`,
+          `Characters (with spaces): ${stats.charWithSpaces}`,
+          `Characters (no spaces): ${stats.charNoSpaces}`,
+          `Sentences: ${stats.sentenceCount}`,
+          `Paragraphs: ${stats.paragraphCount}`,
+          `Avg word length: ${stats.avgWordLength.toFixed(2)}`,
+          `Avg sentence length: ${stats.avgSentenceLength.toFixed(2)}`,
+          `Reading time: ${stats.readingTime.toFixed(2)} min`,
+          `Speaking time: ${stats.speakingTime.toFixed(2)} min`,
+          `Unique words: ${stats.uniqueWords}`,
+          `Vocabulary density: ${(stats.vocabDensity*100).toFixed(1)}%`,
+          `Top 10 freq: ${stats.topFreq.map(([w,c]) => `${w} (${c})`).join(', ') || '—'}`
+        ].join('\n');
+        navigator.clipboard.writeText(lines).then(() => {
+          // optional feedback
+        }).catch(() => {});
+      }
+    });
+
+    // initial
+    textarea.value = 'The quick brown fox jumps over the lazy dog. This sentence has several words. Amazing!';
+    update();
+
+    // live update
+    textarea.addEventListener('input', update);
+  })();
+</script>
+
+<!-- structured data JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Word Counter & Text Statistics — Detailed Analysis",
+      "url": "https://writingassistant.org/word-counter",
+      "description": "Real‑time word, character, sentence, paragraph counts, reading time, vocabulary density, frequency and length distributions.",
+      "applicationCategory": "Writing",
+      "operatingSystem": "All"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How is reading time calculated?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Reading time is based on 200 words per minute (WPM)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are stop words?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Common English words like 'the', 'a', 'is' are excluded from the top frequency list."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://writingassistant.org/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Word Counter & Text Statistics",
+          "item": "https://writingassistant.org/word-counter"
+        }
+      ]
+    }
+  ]
+}
+</script>
+</body>
+</html>
