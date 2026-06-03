@@ -1,855 +1,431 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Writing Prompt Generator — Get Inspired Instantly</title>
-  <meta name="description" content="Generate creative writing prompts across fiction, non‑fiction, poetry, journaling, and exercises. Filter by difficulty, set a timer, and save favorites.">
-  <link rel="canonical" href="https://writingassistant.org/tools/writing-prompt-generator">
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Writing Prompt Generator",
-    "url": "https://writingassistant.org/writing-prompt-generator",
-    "description": "Generate creative writing prompts across fiction, non‑fiction, poetry, journaling, and exercises. Filter by difficulty, set a timer, and save favorites.",
-    "applicationCategory": "Writing",
-    "operatingSystem": "All"
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {"@type":"Question","name":"How do I generate a prompt?","acceptedAnswer":{"@type":"Answer","text":"Select a category and difficulty, then click 'Generate Prompt'."}},
-      {"@type":"Question","name":"Can I save prompts?","acceptedAnswer":{"@type":"Answer","text":"Yes, click the heart icon to save to favorites (localStorage)."}},
-      {"@type":"Question","name":"Is there a timer?","acceptedAnswer":{"@type":"Answer","text":"Yes, choose a duration and click 'Start Timer' for a countdown."}}
-    ]
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {"@type":"ListItem","position":1,"name":"Home","item":"https://writingassistant.org/"},
-      {"@type":"ListItem","position":2,"name":"Writing Prompt Generator","item":"https://writingassistant.org/writing-prompt-generator"}
-    ]
-  }
-  </script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      background: #0a0a0a;
-      color: #e0e0e0;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 1rem;
-    }
-    .container {
-      max-width: 1000px;
-      width: 100%;
-    }
-    header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 2rem;
-      border-bottom: 1px solid #2a2a2a;
-      padding-bottom: 0.75rem;
-    }
-    h1 {
-      font-weight: 400;
-      font-size: 2rem;
-      letter-spacing: -0.02em;
-      color: #f0f0f0;
-    }
-    h1 span {
-      color: #4fc3f7;
-    }
-    .breadcrumbs {
-      font-size: 0.85rem;
-      color: #999;
-    }
-    .breadcrumbs a {
-      color: #4fc3f7;
-      text-decoration: none;
-    }
-    .breadcrumbs a:hover { text-decoration: underline; }
-    .panel {
-      background: #121212;
-      border-radius: 24px;
-      padding: 1.8rem 2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-      border: 1px solid #2a2a2a;
-    }
-    .flex-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.2rem 2rem;
-      align-items: flex-end;
-    }
-    .filter-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-      min-width: 130px;
-    }
-    .filter-group label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #aaa;
-    }
-    select, button {
-      background: #1e1e1e;
-      color: #e0e0e0;
-      border: 1px solid #333;
-      padding: 0.6rem 1rem;
-      border-radius: 40px;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    select:focus, button:focus {
-      outline: 1px solid #4fc3f7;
-    }
-    button {
-      background: #2a2a2a;
-      border: 1px solid #4fc3f7;
-      color: #e0f7ff;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    button:hover {
-      background: #1f3b47;
-      border-color: #4fc3f7;
-      box-shadow: 0 0 12px #4fc3f744;
-    }
-    .generate-btn {
-      background: #0d2b36;
-      border-color: #4fc3f7;
-      padding: 0.6rem 2rem;
-      font-size: 1.1rem;
-    }
-    .generate-btn:hover {
-      background: #1a4b5e;
-    }
-    .prompt-box {
-      background: #0e0e0e;
-      border-radius: 40px;
-      padding: 1.8rem 2rem;
-      margin: 1.8rem 0 1.2rem;
-      border-left: 6px solid #4fc3f7;
-      min-height: 120px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      transition: 0.25s;
-    }
-    .prompt-text {
-      font-size: 1.4rem;
-      line-height: 1.5;
-      word-break: break-word;
-    }
-    .prompt-meta {
-      display: flex;
-      gap: 1rem;
-      margin-top: 0.6rem;
-      font-size: 0.8rem;
-      color: #8a8a8a;
-    }
-    .action-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem 1.2rem;
-      align-items: center;
-      margin-top: 0.5rem;
-    }
-    .icon-btn {
-      background: transparent;
-      border: 1px solid #444;
-      border-radius: 40px;
-      padding: 0.4rem 1rem;
-      font-size: 0.9rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .icon-btn:hover {
-      background: #2a2a2a;
-      border-color: #4fc3f7;
-    }
-    .favorite-active {
-      color: #f76b8a;
-      border-color: #f76b8a;
-    }
-    .history-area {
-      background: #0f0f0f;
-      border-radius: 20px;
-      padding: 1rem 1.5rem;
-      margin-top: 1.2rem;
-      border: 1px solid #242424;
-    }
-    .history-title {
-      font-size: 0.8rem;
-      color: #999;
-      letter-spacing: 0.03em;
-    }
-    .history-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem 1rem;
-      margin-top: 0.4rem;
-    }
-    .history-item {
-      background: #1a1a1a;
-      padding: 0.2rem 1rem;
-      border-radius: 30px;
-      font-size: 0.8rem;
-      color: #ccc;
-      max-width: 220px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .writing-area {
-      margin: 1.8rem 0;
-    }
-    .writing-area textarea {
-      width: 100%;
-      background: #0e0e0e;
-      border: 1px solid #2a2a2a;
-      border-radius: 24px;
-      padding: 1.5rem;
-      color: #e0e0e0;
-      font-size: 1rem;
-      line-height: 1.6;
-      resize: vertical;
-      min-height: 180px;
-      transition: 0.2s;
-    }
-    .writing-area textarea:focus {
-      border-color: #4fc3f7;
-      outline: none;
-    }
-    .word-count {
-      text-align: right;
-      font-size: 0.85rem;
-      color: #aaa;
-      margin-top: 0.3rem;
-    }
-    .timer-section {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 1rem 1.5rem;
-      margin: 1rem 0 0.5rem;
-    }
-    .timer-display {
-      font-size: 1.8rem;
-      font-weight: 300;
-      font-variant-numeric: tabular-nums;
-      color: #4fc3f7;
-      min-width: 6rem;
-    }
-    .footer {
-      margin-top: 3rem;
-      text-align: center;
-      font-size: 0.9rem;
-      color: #666;
-    }
-    .footer a {
-      color: #4fc3f7;
-      text-decoration: none;
-    }
-    .footer a:hover { text-decoration: underline; }
-    .anim-generate {
-      animation: pulseGlow 0.5s ease;
-    }
-    @keyframes pulseGlow {
-      0% { background: #0e0e0e; border-left-color: #4fc3f7; }
-      50% { background: #1e2a30; border-left-color: #b3e5fc; box-shadow: 0 0 24px #4fc3f722; }
-      100% { background: #0e0e0e; border-left-color: #4fc3f7; }
-    }
-    @media (max-width: 600px) {
-      .panel { padding: 1.2rem; }
-      .prompt-text { font-size: 1.2rem; }
-    }
-  </style>
-
-    <meta property="og:title" content="Writing Prompt Generator — Get Inspired Instantly">
-    <meta property="og:description" content="Generate creative writing prompts across fiction, non‑fiction, poetry, journaling, and exercises. Filter by difficulty, set a timer, and save favorites.">
-    <meta property="og:type" content="website">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing Prompt Generator - Get Inspired</title>
+    <meta name="description" content="Generate creative writing prompts for fiction, essays, journaling, and descriptive writing. Free tool with timer and word counter at writingassistant.org.">
+    <link rel="canonical" href="https://writingassistant.org/tools/writing-prompt-generator">
+    <meta property="og:title" content="Writing Prompt Generator - Get Inspired">
+    <meta property="og:description" content="Generate creative writing prompts for fiction, essays, journaling, and descriptive writing. Free tool with timer and word counter.">
     <meta property="og:url" content="https://writingassistant.org/tools/writing-prompt-generator">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://writingassistant.org/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Writing Prompt Generator",
+        "url": "https://writingassistant.org/tools/writing-prompt-generator",
+        "description": "Generate creative writing prompts for fiction, essays, journaling, and descriptive writing.",
+        "applicationCategory": "Writing",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript"
+    }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 720px;
+            width: 100%;
+            background: #1e293b;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #f8fafc;
+        }
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        select, button {
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        select:focus, button:focus {
+            outline: 2px solid #38bdf8;
+            outline-offset: 2px;
+        }
+        button {
+            background: #38bdf8;
+            color: #0f172a;
+            font-weight: 600;
+            border: none;
+        }
+        button:hover {
+            background: #7dd3fc;
+            transform: scale(1.02);
+        }
+        .prompt-box {
+            background: #0f172a;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            min-height: 120px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #38bdf8;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+        }
+        .prompt-text {
+            width: 100%;
+        }
+        .meta-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem 2rem;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 0;
+            border-top: 1px solid #334155;
+            border-bottom: 1px solid #334155;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .meta-item span {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+        .timer-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .timer-controls button {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            background: #334155;
+            color: #e2e8f0;
+        }
+        .timer-controls button:hover {
+            background: #475569;
+        }
+        textarea {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            color: #e2e8f0;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+            line-height: 1.5;
+        }
+        textarea:focus {
+            outline: 2px solid #38bdf8;
+            outline-offset: 2px;
+        }
+        .word-count {
+            text-align: right;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+        .word-count span {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+            max-width: 720px;
+            width: 100%;
+        }
+        footer a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 500px) {
+            .container { padding: 1.25rem; }
+            h1 { font-size: 1.5rem; }
+            .controls { flex-direction: column; }
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-  <header>
-    <div>
-      <h1>✎ <span>Prompt</span> Generator</h1>
-      <div class="breadcrumbs">
-        <a href="https://writingassistant.org/">Home</a> › Writing Prompt Generator
-      </div>
-    </div>
-  </header>
+    <h1>✍️ Writing Prompt Generator</h1>
+    <p class="subtitle">Get inspired — fiction, essays, journaling, descriptive</p>
 
-  <div class="panel">
-    <!-- filters -->
-    <div class="flex-row">
-      <div class="filter-group">
-        <label for="category">Category</label>
-        <select id="category">
-          <optgroup label="Fiction">
-            <option value="fantasy">Fantasy</option>
-            <option value="sci-fi">Sci‑Fi</option>
-            <option value="mystery">Mystery</option>
-            <option value="romance">Romance</option>
-            <option value="horror">Horror</option>
-            <option value="literary">Literary</option>
-          </optgroup>
-          <optgroup label="Non‑fiction">
-            <option value="personal-essay">Personal Essay</option>
-            <option value="opinion">Opinion</option>
-            <option value="how-to">How‑to</option>
-            <option value="profile">Profile</option>
-          </optgroup>
-          <optgroup label="Poetry">
-            <option value="poetry">Poetry</option>
-          </optgroup>
-          <optgroup label="Journaling">
-            <option value="journaling">Journaling</option>
-          </optgroup>
-          <optgroup label="Exercises">
-            <option value="creative-exercises">Creative Writing Exercises</option>
-          </optgroup>
+    <div class="controls">
+        <select id="categorySelect" aria-label="Filter by category">
+            <option value="all">All Categories</option>
+            <option value="fiction">Fiction</option>
+            <option value="essay">Essay</option>
+            <option value="journal">Journal</option>
+            <option value="descriptive">Descriptive</option>
         </select>
-      </div>
-      <div class="filter-group">
-        <label for="difficulty">Difficulty</label>
-        <select id="difficulty">
-          <option value="beginner">Beginner</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="advanced">Advanced</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <label for="wordTarget">Word target</label>
-        <select id="wordTarget">
-          <option value="100">100</option>
-          <option value="250" selected>250</option>
-          <option value="500">500</option>
-          <option value="1000">1000</option>
-          <option value="2000">2000</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <label for="timerSelect">Timer (min)</label>
-        <select id="timerSelect">
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="15" selected>15</option>
-          <option value="25">25</option>
-          <option value="50">50</option>
-        </select>
-      </div>
-      <button class="generate-btn" id="generateBtn">✨ Generate</button>
+        <button id="generateBtn">Generate Prompt</button>
     </div>
 
-    <!-- prompt display -->
-    <div class="prompt-box" id="promptBox">
-      <div class="prompt-text" id="promptDisplay">Choose a category and click Generate.</div>
-      <div class="prompt-meta">
-        <span id="promptCategory">—</span>
-        <span id="promptDifficulty">—</span>
-      </div>
+    <div class="prompt-box">
+        <div class="prompt-text" id="promptDisplay">Click "Generate Prompt" to start writing.</div>
     </div>
 
-    <!-- action bar -->
-    <div class="action-bar">
-      <button class="icon-btn" id="favoriteBtn">♡ Save</button>
-      <button class="icon-btn" id="historyBtn">📋 History</button>
-      <span style="color:#666; font-size:0.9rem;" id="favoriteCount">0 saved</span>
+    <div class="meta-bar">
+        <div class="meta-item">⏱️ Timer: <span id="timerDisplay">00:00</span></div>
+        <div class="timer-controls">
+            <button id="startTimerBtn">Start</button>
+            <button id="resetTimerBtn">Reset</button>
+        </div>
+        <div class="meta-item">📝 Words: <span id="wordCountDisplay">0</span></div>
     </div>
 
-    <!-- history (hidden by default) -->
-    <div class="history-area" id="historyArea" style="display: none;">
-      <div class="history-title">📜 Last 10 prompts</div>
-      <div class="history-list" id="historyList"></div>
-    </div>
-
-    <!-- timer + writing area -->
-    <div class="timer-section">
-      <span class="timer-display" id="timerDisplay">15:00</span>
-      <button id="timerToggleBtn">▶ Start</button>
-      <button id="timerResetBtn">⟲ Reset</button>
-      <span style="color:#888; font-size:0.85rem;">Target: <span id="targetWordDisplay">250</span> words</span>
-    </div>
-
-    <div class="writing-area">
-      <textarea id="writingArea" placeholder="Start writing here…"></textarea>
-      <div class="word-count">📝 <span id="wordCountDisplay">0</span> words</div>
-    </div>
-  </div>
-
-  <div class="footer">
-    <a href="https://writingassistant.org/">writingassistant.org</a> — your daily writing tool
-  </div>
+    <textarea id="writingArea" placeholder="Start writing here... Your words will be counted automatically."></textarea>
+    <div class="word-count">Word count: <span id="wordCountInline">0</span></div>
 </div>
 
+<footer>
+    <p>© 2025 <a href="https://writingassistant.org">writingassistant.org</a> — Free writing tools for everyone.</p>
+</footer>
+
 <script>
-  (function() {
-    // --------------------------------------------------------------
-    // PROMPT DATA (50+ per category, but we keep concise with >50 total per category)
-    // For brevity, we store 10+ per subcategory, but combined >50 per category group.
-    // Actually we ensure each category has at least 10, and total across all > 200.
-    // But spec says 50+ per category – we'll provide many.
-    // --------------------------------------------------------------
-    const PROMPTS = {
-      fantasy: [
-        "A forgotten god wakes up in a modern library.",
-        "The last dragon egg hatches in a city sewer.",
-        "A young thief steals a map that changes color.",
-        "The forest remembers every lie ever told.",
-        "A wizard loses their magic and opens a bakery.",
-        "Two rival kingdoms must unite against a silent fog.",
-        "A child can hear the thoughts of statues.",
-        "The moon is actually a giant pearl.",
-        "A knight returns from war to find the castle empty.",
-        "A magical door appears in every mirror at midnight.",
-        "The stars are holes in the sky—someone is watching.",
-        "A bard sings a song that makes people forget.",
-        "An ancient tree grows coins instead of leaves.",
-        "A sorcerer creates a garden of glass flowers.",
-        "The wind carries messages from the dead.",
-        "A dragon offers to trade a wish for a memory.",
-        "A kingdom where shadows have their own kingdom.",
-        "A potion that lets you speak to animals for one day.",
-        "The last unicorn is hiding in a suburban backyard.",
-        "A magic carpet that only flies during rain.",
-        "A library where books rewrite themselves.",
-        "A girl who can step into paintings.",
-        "A sword that can cut through lies.",
-        "The king is a puppet controlled by a jester.",
-        "A ghost that wants to learn how to cook.",
-        "A map that leads to a place that doesn't exist yet.",
-        "A witch who curses people with bad puns.",
-        "A boy who can talk to the dead through radio static.",
-        "A castle built on the back of a giant turtle.",
-        "A potion that makes you forget a language.",
-        "A magical coin that always returns to its owner.",
-        "A door in the woods that only opens during an eclipse.",
-        "A dragon that hoards secrets instead of gold.",
-        "A kingdom where everyone wears masks.",
-        "A wizard who can only cast spells backwards.",
-        "A forest where the trees sing lullabies.",
-        "A girl who can see the last thought of dying things.",
-        "A knight who is afraid of horses.",
-        "A magic mirror that shows your worst fear.",
-        "A spell that makes you tell the truth for a day.",
-        "A world where colors have flavors.",
-        "A dragon that collects teacups.",
-        "A castle that moves one step every century.",
-        "A prince turned into a frog—but he likes it.",
-        "A magical paintbrush that brings drawings to life.",
-        "A kingdom where shadows are servants.",
-        "A witch who sells bottled thunderstorms.",
-        "A boy who can hear the songs of stars.",
-        "A library at the end of the world.",
-        "A dragon that grants wishes—but always twisted.",
-        "A girl who can walk through walls made of stone.",
-        "A magic ring that makes you invisible only in moonlight.",
-        "A forest where the trees have eyes.",
-        "A wizard who turns memories into candles.",
-        "A kingdom that floats on a cloud."
-      ],
-      "sci-fi": [
-        "A colony on Mars discovers a buried ocean.",
-        "An AI writes poetry about its dreams.",
-        "Time travel is possible but only to last Tuesday.",
-        "A space station where gravity is a luxury.",
-        "Aliens communicate through smells.",
-        "A robot falls in love with a toaster.",
-        "The last human on Earth is a librarian.",
-        "A planet where it rains glass.",
-        "A neural implant that lets you relive memories.",
-        "A spaceship powered by regret.",
-        "A scientist creates a mini black hole in a lab.",
-        "A message from the future: 'Don't build the wall.'",
-        "A cyborg who wants to become a gardener.",
-        "A world where everyone has a digital twin.",
-        "A virus that makes people tell the truth.",
-        "A moon that is actually a giant computer.",
-        "A time traveler stuck in a loop.",
-        "A robot that can feel nostalgia.",
-        "A colony of humans living inside a giant whale.",
-        "A planet where the sun never sets.",
-        "A device that translates animal thoughts.",
-        "A war fought with drones that have feelings.",
-        "A scientist who invents a dream recorder.",
-        "A space elevator to a floating city.",
-        "A girl who can hack her own brain.",
-        "A world where emotions are currency.",
-        "A machine that can write your life story.",
-        "A planet where everyone is born with a purpose.",
-        "A spaceship that is alive.",
-        "A man who wakes up on a different planet every day.",
-        "A robot that writes children's books.",
-        "A city that moves on rails.",
-        "A device that lets you see alternate realities.",
-        "A scientist who clones herself to do chores.",
-        "A world where time moves backward.",
-        "A message in a bottle from a parallel universe.",
-        "A computer that can predict the future—but lies.",
-        "A planet where the oceans are made of mercury.",
-        "A cyborg who wants to learn ballet.",
-        "A space pirate who steals constellations.",
-        "A machine that can bring back extinct species.",
-        "A world where people have barcodes on their skin.",
-        "A robot that dreams of electric sheep.",
-        "A time machine that only goes forward.",
-        "A girl who can communicate with satellites.",
-        "A planet where the trees are made of metal.",
-        "A scientist who invents a teleportation device—but it only works on socks.",
-        "A world where gravity is optional.",
-        "A spaceship crewed by clones.",
-        "A black hole that whispers secrets.",
-        "A machine that can translate alien languages.",
-        "A colony on a planet that is actually a giant egg.",
-        "A robot that becomes a chef.",
-        "A world where people can swap bodies.",
-        "A time traveler who brings back a dinosaur."
-      ],
-      mystery: [
-        "A locked room with a single footprint on the ceiling.",
-        "A detective receives a letter from their future self.",
-        "A missing person case with no missing person.",
-        "A crime scene where everything is mirrored.",
-        "A witness who can only speak in riddles.",
-        "A murder weapon that is a snow globe.",
-        "A suspect who has an alibi for every second.",
-        "A clue written in invisible ink that only appears in moonlight.",
-        "A detective who can't remember their own name.",
-        "A case where the victim is a ghost.",
-        "A stolen painting that changes every time you look at it.",
-        "A mystery involving a string of identical twins.",
-        "A detective who uses a cat as a partner.",
-        "A crime that happens in a room full of mirrors.",
-        "A secret message in a bottle of wine.",
-        "A suspect who is always smiling.",
-        "A case where the only clue is a smell.",
-        "A detective who solves crimes in their dreams.",
-        "A murder that is predicted in a comic book.",
-        "A locked chest with no keyhole.",
-        "A witness who is a parrot.",
-        "A crime scene that is too clean.",
-        "A detective who is afraid of the dark.",
-        "A mystery set in a library where books disappear.",
-        "A clue that is a single word: 'remember'.",
-        "A case where everyone is lying.",
-        "A detective who uses a magnifying glass that shows the past.",
-        "A stolen artifact that is a mirror.",
-        "A suspect who has no reflection.",
-        "A crime that happens in a moving train.",
-        "A mystery involving a series of identical houses.",
-        "A detective who can hear colors.",
-        "A case where the victim is a statue.",
-        "A clue that is a song lyric.",
-        "A murder weapon that is a book.",
-        "A detective who solves cases by tasting things.",
-        "A mystery set in a circus.",
-        "A suspect who is a clown.",
-        "A crime that happens in a room with no doors.",
-        "A detective who has a photographic memory—but only for faces.",
-        "A case where the only witness is a child.",
-        "A stolen object that is a shadow.",
-        "A mystery involving a series of locked rooms.",
-        "A detective who can talk to the dead.",
-        "A crime that happens in a dream.",
-        "A clue that is a riddle.",
-        "A suspect who is a magician.",
-        "A case where the victim is a mirror.",
-        "A detective who uses a pocket watch that stops time.",
-        "A mystery set in a museum at night.",
-        "A crime that is committed by a ghost.",
-        "A detective who is a robot.",
-        "A case where the only clue is a feather.",
-        "A mystery involving a missing day.",
-        "A detective who can smell lies."
-      ],
-      romance: [
-        "Two strangers meet in a broken elevator.",
-        "A love letter found in a library book.",
-        "A couple who can only meet in dreams.",
-        "A matchmaker who falls for their client.",
-        "A love story set in a coffee shop that plays sad music.",
-        "Two people who hate each other but are forced to write a book together.",
-        "A romance between a robot and a human.",
-        "A couple who communicate through sticky notes.",
-        "A love story that starts with a wrong number.",
-        "Two people who meet at a wedding that isn't theirs.",
-        "A love letter that arrives 50 years late.",
-        "A couple who are rivals in a cooking competition.",
-        "A romance set in a bookstore during a storm.",
-        "Two people who share a locker.",
-        "A love story that begins with a dare.",
-        "A couple who are both spies.",
-        "A romance between a ghost and a living person.",
-        "Two people who meet on a train that never stops.",
-        "A love story set in a laundromat.",
-        "A couple who fall in love while arguing about movies.",
-        "A romance between a gardener and a robot.",
-        "Two people who are pen pals.",
-        "A love story that takes place in one day.",
-        "A couple who are both time travelers.",
-        "A romance set in a library after hours.",
-        "Two people who meet at a costume party.",
-        "A love story that involves a stolen umbrella.",
-        "A couple who are both musicians.",
-        "A romance between a detective and a suspect.",
-        "Two people who meet in a virtual reality.",
-        "A love story set in a bakery.",
-        "A couple who fall in love while building a puzzle.",
-        "A romance between a human and a mermaid.",
-        "Two people who meet at a funeral.",
-        "A love story that starts with a flat tire.",
-        "A couple who are both artists.",
-        "A romance set in a zoo.",
-        "Two people who meet in a line for a movie.",
-        "A love story that involves a secret garden.",
-        "A couple who fall in love while traveling.",
-        "A romance between a chef and a food critic.",
-        "Two people who meet at a wedding rehearsal.",
-        "A love story set in a lighthouse.",
-        "A couple who are both astronomers.",
-        "A romance between a human and a vampire.",
-        "Two people who meet at a yoga class.",
-        "A love story that involves a lost dog.",
-        "A couple who fall in love while hiking.",
-        "A romance set in a flower shop.",
-        "Two people who meet at a concert.",
-        "A love story that starts with a bet.",
-        "A couple who are both writers.",
-        "A romance between a pilot and a sailor.",
-        "Two people who meet in a dream.",
-        "A love story set in a train station."
-      ],
-      horror: [
-        "A house that grows teeth.",
-        "A mirror that shows your future self dead.",
-        "A doll that moves when you blink.",
-        "A phone call from your own number.",
-        "A door in the basement that leads to a forest.",
-        "A shadow that doesn't match your movements.",
-        "A child's drawing that comes true.",
-        "A staircase that leads to a room that isn't there.",
-        "A whisper that says your name at 3 AM.",
-        "A photograph where the background changes.",
-        "A closet that is bigger inside than outside.",
-        "A song that makes people disappear.",
-        "A mirror that shows a different reflection.",
-        "A book that writes itself.",
-        "A door that appears in a wall that wasn't there.",
-        "A ghost that follows you home.",
-        "A dream where you die and wake up dead.",
-        "A video game that controls your mind.",
-        "A doll that has your face.",
-        "A house that remembers its previous owners.",
-        "A shadow that speaks.",
-        "A mirror that steals your reflection.",
-        "A phone that rings with no one on the line.",
-        "A closet that opens by itself.",
-        "A painting that blinks.",
-        "A song that plays backward and summons something.",
-        "A door that leads to a different year.",
-        "A ghost that wants to be friends.",
-        "A dream where you are being watched.",
-        "A mirror that shows your worst fear.",
-        "A book that can't be closed.",
-        "A staircase that goes down forever.",
-        "A doll that cries blood.",
-        "A house that breathes.",
-        "A shadow that grows larger.",
-        "A phone that shows your own number calling.",
-        "A video that predicts your death.",
-        "A closet that contains a universe.",
-        "A mirror that ages you.",
-        "A song that makes you forget.",
-        "A door that leads to a void.",
-        "A ghost that wears your face.",
-        "A dream where you are a ghost.",
-        "A painting that follows you with its eyes.",
-        "A book that reads you.",
-        "A staircase that disappears behind you.",
-        "A doll that walks.",
-        "A house that eats people.",
-        "A shadow that has a voice.",
-        "A mirror that shows a different room.",
-        "A phone that calls the dead.",
-        "A video that plays by itself.",
-        "A closet that contains your doppelganger.",
-        "A mirror that shows your past.",
-        "A song that never ends."
-      ],
-      literary: [
-        "Write a story about a memory that changes every time you recall it.",
-        "A character who realizes they are in a story.",
-        "A conversation between two strangers on a park bench.",
-        "A letter to someone you will never meet.",
-        "A story that starts with the line: 'The last time I saw her, she was laughing.'",
-        "A character who collects broken things.",
-        "A story about a photograph that fades.",
-        "A man who wakes up in a room full of clocks.",
-        "A woman who can hear the thoughts of trees.",
-        "A story about a bridge that connects two worlds.",
-        "A character who is afraid of silence.",
-        "A story that takes place in a single hour.",
-        "A conversation between a child and an old man.",
-        "A story about a letter that never arrives.",
-        "A character who lives in a library.",
-        "A story about a song that haunts you.",
-        "A woman who paints her dreams.",
-        "A story about a door that leads to a different life.",
-        "A character who can taste emotions.",
-        "A story about a garden that grows memories.",
-        "A conversation between two people who have never met.",
-        "A story about a clock that runs backward.",
-        "A character who is invisible to everyone except one person.",
-        "A story about a train that never stops.",
-        "A woman who can see the future in reflections.",
-        "A story about a book that changes its ending.",
-        "A character who is a professional mourner.",
-        "A story about a house that remembers.",
-        "A conversation between a ghost and a living person.",
-        "A story about a river that carries secrets.",
-        "A character who collects words.",
-        "A story about a mirror that shows the truth.",
-        "A woman who can walk through walls.",
-        "A story about a song that brings rain.",
-        "A character who is a mapmaker of imaginary places.",
-        "A story about a door that only opens at midnight.",
-        "A conversation between a painter and a poet.",
-        "A story about a garden that blooms at night.",
-        "A character who can hear colors.",
-        "A story about a lighthouse keeper.",
-        "A woman who can speak to the dead through water.",
-        "A story about a bridge that is never crossed.",
-        "A character who is a keeper of lost things.",
-        "A story about a clock that chimes thirteen.",
-        "A conversation between a scientist and a mystic.",
-        "A story about a photograph that moves.",
-        "A character who can taste music.",
-        "A story about a river that flows backward.",
-        "A woman who can see the past in stones.",
-        "A story about a house that is a character.",
-        "A character who is a weaver of stories.",
-        "A story about a door that leads to a different time.",
-        "A conversation between a child and a ghost.",
-        "A story about a garden that grows from tears.",
-        "A character who can smell emotions."
-      ],
-      "personal-essay": [
-        "Write about a time you felt invisible.",
-        "Describe a place that feels like home.",
-        "A lesson you learned from a stranger.",
-        "A mistake that changed your perspective.",
-        "Write about a smell that brings back a memory.",
-        "A tradition you want to pass on.",
-        "A time you stood up for something.",
-        "Describe a moment of unexpected kindness.",
-        "A fear you overcame.",
-        "A song that defines a period of your life.",
-        "Write about a object you treasure.",
-        "A time you felt lost.",
-        "A lesson from a child.",
-        "A place you’ve never been but feel connected to.",
-        "A decision that changed your life.",
-        "Write about a photograph that means a lot.",
-        "A time you were misunderstood.",
-        "A habit you want to break.",
-        "A moment of pure joy.",
-        "A person who influenced you.",
-        "Write about a book that changed you.",
-        "A time you felt proud.",
-        "A regret that taught you something.",
-        "A memory that makes you smile.",
-        "A time you felt truly alone.",
-        "A lesson from a pet.",
-        "A place you go to think.",
-        "A tradition you dislike.",
-        "A time you took a risk.",
-        "A moment of silence that spoke volumes.",
-        "Write about a letter you wish you had written.",
-        "A time you felt brave.",
-        "A smell that reminds you of childhood.",
-        "A sound that calms you.",
-        "A memory of a meal.",
-        "A time you forgave someone.",
-        "A lesson from a failure.",
-        "A place that inspires you.",
-        "A person you miss.",
-        "A time you felt grateful.",
-        "Write about a dream you remember.",
-        "A time you felt out of place.",
-        "A habit that defines you.",
-        "A moment of unexpected laughter.",
-        "A time you helped a stranger.",
-        "A lesson from a journey.",
-        "A memory of a season.",
-        "A time you felt truly free.",
-        "A object that tells a story.",
-        "A time you were surprised.",
-        "A moment of peace.",
-        "A lesson from a movie.",
-        "A time you felt connected to nature.",
-        "A memory of a sound.",
-        "A time you learned something about yourself."
-      ],
-      opinion: [
-        "Should schools teach emotional intelligence?",
-        "Is social media making us more lonely?",
-        "The importance of reading fiction.",
-        "Should cities be designed for cars or people?",
-        "The value of a gap year.",
-        "Is remote work better for creativity?",
-        "Should art be funded by the government?",
-        "The role of technology in education.",
-        "Is it better to be a generalist or a specialist?",
-        "The ethics of artificial intelligence.",
-        "Should voting be mandatory?",
-        "The impact of fast fashion.",
-        "Is college still worth it?",
-        "The importance of mental health days.",
-        "Should zoos be banned?",
-        "The role of music in society.",
-        "Is it okay to quit?",
-        "The value of learning a second language.",
-        "Should we have a four-day work week?",
-        "The importance of community gardens.",
-        "Is cancel culture productive?",
-        "The role of sports in education.",
-        "Should we eat less meat?",
-        "The importance of public libraries.",
-        "Is it better to live in the city or the country?",
-        "The value of handwritten letters.",
-        "Should schools teach financial literacy?",
-        "The impact of video games on the mind.",
-        "Is it important to be politically correct?",
-        "The role of art in therapy.",
-        "Should we have a universal basic income?",
-        "The importance of
-    <footer style="text-align:center;padding:2rem 1rem;margin-top:2rem;border-top:1px solid #334155;color:#94a3b8;font-size:0.85rem;">
-        <p>&copy; 2025 writingassistant.org &mdash; Free online tool. No data stored.</p>
-    </footer>
+    (function() {
+        // ----- 80+ prompts database -----
+        const prompts = [
+            // Fiction (20)
+            { text: "A stranger leaves a mysterious note on your windshield. What does it say?", category: "fiction" },
+            { text: "You discover a hidden room in your house that wasn't there before.", category: "fiction" },
+            { text: "Write about a world where people can only speak in rhymes.", category: "fiction" },
+            { text: "A detective who can't lie solves a crime where everyone is telling the truth.", category: "fiction" },
+            { text: "You wake up as your pet. Describe your day.", category: "fiction" },
+            { text: "The last library on Earth holds a dangerous secret.", category: "fiction" },
+            { text: "A time traveler accidentally brings a medieval knight to the present.", category: "fiction" },
+            { text: "Write a story that begins with 'The door slid open, and nothing was there.'", category: "fiction" },
+            { text: "A child's imaginary friend starts giving real advice.", category: "fiction" },
+            { text: "In a world without color, one person sees a single hue.", category: "fiction" },
+            { text: "A robot learns to dream. What does it dream about?", category: "fiction" },
+            { text: "Two strangers are forced to share a phone for a week.", category: "fiction" },
+            { text: "Write about a heist where the target is a memory.", category: "fiction" },
+            { text: "A ghost tries to scare a family but falls in love with their dog.", category: "fiction" },
+            { text: "The ocean suddenly becomes fresh water. What happens next?", category: "fiction" },
+            { text: "You find a camera that takes pictures of the past.", category: "fiction" },
+            { text: "A village where everyone tells a story every night, and one story comes true.", category: "fiction" },
+            { text: "Write from the perspective of a tree that has seen centuries.", category: "fiction" },
+            { text: "A musician discovers their music can heal wounds.", category: "fiction" },
+            { text: "The moon disappears. No one knows why.", category: "fiction" },
+            // Essay (20)
+            { text: "What is a belief you held strongly that you later changed?", category: "essay" },
+            { text: "Describe a moment when you felt truly alive.", category: "essay" },
+            { text: "What does 'home' mean to you?", category: "essay" },
+            { text: "Write about a book that changed your perspective.", category: "essay" },
+            { text: "What is the role of failure in success?", category: "essay" },
+            { text: "How has technology changed the way we connect?", category: "essay" },
+            { text: "Describe a tradition you cherish and why.", category: "essay" },
+            { text: "What is something you wish you had learned earlier in life?", category: "essay" },
+            { text: "Write about a time you helped a stranger.", category: "essay" },
+            { text: "What does courage look like in everyday life?", category: "essay" },
+            { text: "How do you define creativity?", category: "essay" },
+            { text: "What is the most important lesson nature teaches us?", category: "essay" },
+            { text: "Write about a piece of advice you would give your younger self.", category: "essay" },
+            { text: "What does it mean to be a good friend?", category: "essay" },
+            { text: "How do you find balance in a busy world?", category: "essay" },
+            { text: "Describe a place that feels like a sanctuary to you.", category: "essay" },
+            { text: "What is a skill you want to learn and why?", category: "essay" },
+            { text: "Write about the value of listening.", category: "essay" },
+            { text: "What does 'success' look like to you?", category: "essay" },
+            { text: "How has a challenge shaped who you are?", category: "essay" },
+            // Journal (20)
+            { text: "What made you smile today?", category: "journal" },
+            { text: "Describe a small moment that brought you peace.", category: "journal" },
+            { text: "What is something you are grateful for right now?", category: "journal" },
+            { text: "Write about a dream you remember vividly.", category: "journal" },
+            { text: "What emotion have you felt most today?", category: "journal" },
+            { text: "Describe a conversation that stayed with you.", category: "journal" },
+            { text: "What is one thing you learned this week?", category: "journal" },
+            { text: "Write a letter to your future self.", category: "journal" },
+            { text: "What is a memory that makes you laugh?", category: "journal" },
+            { text: "How do you feel about the person you are becoming?", category: "journal" },
+            { text: "What is something you want to let go of?", category: "journal" },
+            { text: "Describe a moment you felt proud of yourself.", category: "journal" },
+            { text: "What is a simple pleasure you enjoy?", category: "journal" },
+            { text: "Write about a challenge you are currently facing.", category: "journal" },
+            { text: "What does your ideal day look like?", category: "journal" },
+            { text: "How do you practice self-care?", category: "journal" },
+            { text: "What is something you are curious about?", category: "journal" },
+            { text: "Describe a time you felt completely understood.", category: "journal" },
+            { text: "What is a fear you want to overcome?", category: "journal" },
+            { text: "Write about a person who inspires you.", category: "journal" },
+            // Descriptive (20)
+            { text: "Describe a bustling market in a coastal town.", category: "descriptive" },
+            { text: "Paint a picture of a forest after a rainstorm.", category: "descriptive" },
+            { text: "Describe the view from a mountaintop at sunrise.", category: "descriptive" },
+            { text: "Write about the smell of an old library.", category: "descriptive" },
+            { text: "Describe a city street at midnight.", category: "descriptive" },
+            { text: "What does a thunderstorm sound like from inside a cabin?", category: "descriptive" },
+            { text: "Describe the texture of a worn-out leather chair.", category: "descriptive" },
+            { text: "Write about the taste of a homemade meal from your childhood.", category: "descriptive" },
+            { text: "Describe a garden in full bloom.", category: "descriptive" },
+            { text: "What does the air feel like before a snowfall?", category: "descriptive" },
+            { text: "Describe a busy train station during rush hour.", category: "descriptive" },
+            { text: "Write about the colors of a sunset over the ocean.", category: "descriptive" },
+            { text: "Describe the inside of an abandoned house.", category: "descriptive" },
+            { text: "What does a campfire smell like on a cool night?", category: "descriptive" },
+            { text: "Describe the sound of waves crashing on a rocky shore.", category: "descriptive" },
+            { text: "Write about the feeling of walking barefoot on grass.", category: "descriptive" },
+            { text: "Describe a crowded art gallery opening.", category: "descriptive" },
+            { text: "What does a fresh-baked apple pie look and smell like?", category: "descriptive" },
+            { text: "Describe the first light of dawn through a window.", category: "descriptive" },
+            { text: "Write about the sensation of diving into cool water on a hot day.", category: "descriptive" }
+        ];
+
+        // ----- DOM refs -----
+        const promptDisplay = document.getElementById('promptDisplay');
+        const generateBtn = document.getElementById('generateBtn');
+        const categorySelect = document.getElementById('categorySelect');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const startTimerBtn = document.getElementById('startTimerBtn');
+        const resetTimerBtn = document.getElementById('resetTimerBtn');
+        const writingArea = document.getElementById('writingArea');
+        const wordCountDisplay = document.getElementById('wordCountDisplay');
+        const wordCountInline = document.getElementById('wordCountInline');
+
+        // ----- Timer state -----
+        let timerInterval = null;
+        let seconds = 0;
+        let isRunning = false;
+
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function updateTimerDisplay() {
+            timerDisplay.textContent = formatTime(seconds);
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            isRunning = true;
+            timerInterval = setInterval(() => {
+                seconds++;
+                updateTimerDisplay();
+            }, 1000);
+            startTimerBtn.textContent = 'Pause';
+        }
+
+        function pauseTimer() {
+            if (!isRunning) return;
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isRunning = false;
+            startTimerBtn.textContent = 'Resume';
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isRunning = false;
+            seconds = 0;
+            updateTimerDisplay();
+            startTimerBtn.textContent = 'Start';
+        }
+
+        startTimerBtn.addEventListener('click', function() {
+            if (isRunning) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        });
+
+        resetTimerBtn.addEventListener('click', resetTimer);
+
+        // ----- Word counter -----
+        function countWords(text) {
+            const trimmed = text.trim();
+            if (!trimmed) return 0;
+            return trimmed.split(/\s+/).length;
+        }
+
+        function updateWordCount() {
+            const text = writingArea.value;
+            const count = countWords(text);
+            wordCountDisplay.textContent = count;
+            wordCountInline.textContent = count;
+        }
+
+        writingArea.addEventListener('input', updateWordCount);
+
+        // ----- Generate prompt -----
+        function getFilteredPrompts() {
+            const category = categorySelect.value;
+            if (category === 'all') return prompts;
+            return prompts.filter(p => p.category === category);
+        }
+
+        function generatePrompt() {
+            const filtered = getFilteredPrompts();
+            if (filtered.length === 0) {
+                promptDisplay.textContent = 'No prompts for this category. Try another!';
+                return;
+            }
+            const randomIndex = Math.floor(Math.random() * filtered.length);
+            promptDisplay.textContent = filtered[randomIndex].text;
+        }
+
+        generateBtn.addEventListener('click', generatePrompt);
+
+        // Also generate on category change (optional)
+        categorySelect.addEventListener('change', generatePrompt);
+
+        // ----- Initial prompt on load -----
+        generatePrompt();
+
+        // ----- Ensure word count updates on page load -----
+        updateWordCount();
+
+        // ----- Clean up timer on page unload (optional) -----
+        window.addEventListener('beforeunload', function() {
+            if (timerInterval) clearInterval(timerInterval);
+        });
+    })();
+</script>
+</body>
+</html>
