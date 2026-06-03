@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Readability Score Checker — Flesch-Kincaid & More</title>
+  <meta name="description" content="Real‑time readability analyzer: Flesch‑Kincaid, Gunning Fog, SMOG, Coleman‑Liau, ARI. Syllable counter, sentence stats, audience recommendation.">
+  <link rel="canonical" href="https://writingassistant.org/tools/readability-checker">
+  <!-- Structured data: WebApplication, FAQPage, BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Readability Score Checker",
+    "url": "https://writingassistant.org/readability-checker",
+    "description": "Real‑time readability analyzer with Flesch‑Kincaid, Gunning Fog, SMOG, Coleman‑Liau, ARI, syllable counter, and audience recommendation.",
+    "applicationCategory": "Writing",
+    "operatingSystem": "All"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://writingassistant.org/" },
+      { "@type": "ListItem", "position": 2, "name": "Readability Checker", "item": "https://writingassistant.org/readability-checker" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "What does the Flesch Reading Ease score mean?", "acceptedAnswer": { "@type": "Answer", "text": "Score 0‑100: 60‑70 is plain English, 0‑30 very hard, 90‑100 very easy." } },
+      { "@type": "Question", "name": "How is syllable count estimated?", "acceptedAnswer": { "@type": "Answer", "text": "We use a vowel‑based algorithm with common English exceptions for accurate syllable counting." } }
+    ]
+  }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      padding: 1.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-weight: 500;
+      font-size: 1.9rem;
+      letter-spacing: -0.02em;
+      color: #f0f0f0;
+    }
+    h1 span { color: #4fc3f7; }
+    .subhead { color: #aaa; font-size: 0.95rem; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 800px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    textarea {
+      width: 100%;
+      min-height: 320px;
+      background: #141414;
+      border: 1px solid #2e2e2e;
+      border-radius: 12px;
+      color: #e0e0e0;
+      padding: 1.2rem;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: border 0.2s;
+    }
+    textarea:focus { outline: none; border-color: #4fc3f7; box-shadow: 0 0 0 2px rgba(79,195,247,0.2); }
+    .stats-panel {
+      background: #111;
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid #222;
+    }
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.8rem;
+      margin-bottom: 1.2rem;
+      background: #181818;
+      padding: 0.8rem 1rem;
+      border-radius: 40px;
+    }
+    .stat-item {
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+    }
+    .stat-item .label { color: #999; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .stat-item .value { color: #e0e0e0; font-weight: 500; }
+    .gauge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem 1.5rem;
+      margin: 1.5rem 0 0.8rem;
+    }
+    @media (max-width: 600px) { .gauge-grid { grid-template-columns: 1fr; } }
+    .gauge-card {
+      background: #1a1a1a;
+      border-radius: 14px;
+      padding: 0.9rem 1rem;
+      border: 1px solid #2a2a2a;
+    }
+    .gauge-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 0.3rem;
+    }
+    .gauge-name { color: #ccc; font-weight: 450; }
+    .gauge-value { font-weight: 600; color: #f0f0f0; }
+    .gauge-bar-bg {
+      background: #2a2a2a;
+      height: 8px;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 4px 0 2px;
+    }
+    .gauge-fill {
+      height: 8px;
+      border-radius: 20px;
+      width: 0%;
+      transition: width 0.2s ease, background 0.2s;
+    }
+    .gauge-label {
+      font-size: 0.7rem;
+      color: #888;
+      display: flex;
+      justify-content: space-between;
+    }
+    .audience-box {
+      background: #1a1a1a;
+      border-radius: 14px;
+      padding: 1rem 1.2rem;
+      margin: 1rem 0 0.5rem;
+      border-left: 4px solid #4fc3f7;
+    }
+    .audience-title { font-size: 0.8rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.04em; }
+    .audience-recommend { font-size: 1.2rem; font-weight: 500; color: #e0e0e0; }
+    .highlight-section {
+      margin-top: 1.5rem;
+      background: #111;
+      border-radius: 16px;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid #222;
+    }
+    .highlight-title { font-size: 0.9rem; color: #aaa; margin-bottom: 0.5rem; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; }
+    .tag {
+      background: #1e1e1e;
+      padding: 0.2rem 0.7rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      color: #ccc;
+      border: 1px solid #333;
+    }
+    .tag-hard { border-color: #f7a84f; color: #f7c86f; }
+    .tag-long { border-color: #4fc3f7; color: #8ad4f7; }
+    footer {
+      margin-top: 3rem;
+      border-top: 1px solid #222;
+      padding-top: 1.2rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.85rem;
+    }
+    footer a { color: #4fc3f7; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .note { color: #777; font-size: 0.8rem; margin-top: 0.5rem; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+  </style>
+
+    <meta property="og:title" content="Readability Score Checker — Flesch-Kincaid & More">
+    <meta property="og:description" content="Real‑time readability analyzer: Flesch‑Kincaid, Gunning Fog, SMOG, Coleman‑Liau, ARI. Syllable counter, sentence stats, audience recommendation.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://writingassistant.org/tools/readability-checker">
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1><span>readability</span> score checker</h1>
+      <div class="subhead">Flesch‑Kincaid · Gunning Fog · SMOG · Coleman‑Liau · ARI</div>
+    </div>
+    <div style="color:#777; font-size:0.85rem;">⚡ real‑time analysis</div>
+  </header>
+
+  <div class="grid-2">
+    <div>
+      <textarea id="textInput" placeholder="Paste or type your text here...">The quick brown fox jumps over the lazy dog. This simple sentence contains common words. However, readability analysis requires longer passages to be meaningful. The Flesch‑Kincaid grade level formula uses sentence length and syllable count to estimate the educational level required to understand a text. For instance, academic papers often score high on the grade level index.</textarea>
+    </div>
+    <div class="stats-panel" id="statsPanel">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- highlight section -->
+  <div class="highlight-section" id="highlightSection">
+    <div class="highlight-title">🔍 complex sentences (>25 words) & hard words (≥3 syllables)</div>
+    <div id="tagContainer" class="tag-list"></div>
+    <div class="note">Words shown if they appear in text. Hard words = 3+ syllables.</div>
+  </div>
+
+  <footer>
+    <a href="https://writingassistant.org/">writingassistant.org</a> — readability tool · free &amp; open formulas
+  </footer>
+</div>
+
+<script>
+  (function() {
+    const textarea = document.getElementById('textInput');
+    const statsPanel = document.getElementById('statsPanel');
+    const tagContainer = document.getElementById('tagContainer');
+
+    // ---------- syllable counting (vowel‑based with common exceptions) ----------
+    function countSyllables(word) {
+      if (!word || word.length === 0) return 0;
+      let w = word.toLowerCase().replace(/[^a-z]/g, '');
+      if (w.length === 0) return 0;
+      // common exceptions (silent e, etc.)
+      if (w.endsWith('e') && !w.endsWith('le') && w.length > 2) {
+        // try removing final e for vowel count
+        const base = w.slice(0, -1);
+        if (base.length > 0) {
+          const baseVowels = (base.match(/[aeiouy]+/g) || []).length;
+          if (baseVowels > 0) return baseVowels;
+        }
+      }
+      // special cases: -le, -ies, -ious etc.
+      if (w.endsWith('le') && w.length > 2 && !'aeiouy'.includes(w[w.length-3])) {
+        const base = w.slice(0, -2);
+        const baseV = (base.match(/[aeiouy]+/g) || []).length;
+        return baseV + 1;
+      }
+      // count vowel groups
+      const vowels = w.match(/[aeiouy]+/g);
+      let count = vowels ? vowels.length : 0;
+      // adjust for common silent e
+      if (w.endsWith('e') && count > 1 && !w.endsWith('le')) count--;
+      if (w.endsWith('es') && count > 1) count--;
+      if (w.endsWith('ed') && count > 1 && !w.endsWith('ted') && !w.endsWith('ded')) count--;
+      if (count === 0) count = 1;
+      return count;
+    }
+
+    // ---------- text analysis ----------
+    function analyze(text) {
+      if (!text.trim()) return emptyResult();
+      const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+      const sentences = text.match(/[^.!?]+[.!?]+/g) || [text.replace(/\n/g, ' ').trim()];
+      const cleanSentences = sentences.map(s => s.trim()).filter(s => s.length > 0);
+      const words = text.match(/[a-zA-Z0-9]+(?:['’][a-zA-Z]+)?/g) || [];
+      const totalWords = words.length;
+      const totalSentences = cleanSentences.length || 1;
+      const totalParagraphs = paragraphs.length || 1;
+      const totalChars = text.replace(/\s/g, '').length;
+
+      // syllables per word
+      let totalSyllables = 0;
+      const wordSyllableMap = new Map();
+      for (const w of words) {
+        const s = countSyllables(w);
+        wordSyllableMap.set(w, s);
+        totalSyllables += s;
+      }
+      const avgSyllablesPerWord = totalWords > 0 ? totalSyllables / totalWords : 0;
+      const avgWordsPerSentence = totalSentences > 0 ? totalWords / totalSentences : 0;
+
+      // Flesch Reading Ease
+      const fleschEase = totalWords > 0 && totalSentences > 0
+        ? 206.835 - 1.015 * (totalWords / totalSentences) - 84.6 * (totalSyllables / totalWords)
+        : 0;
+      const fleschGrade = totalWords > 0 && totalSentences > 0
+        ? 0.39 * (totalWords / totalSentences) + 11.8 * (totalSyllables / totalWords) - 15.59
+        : 0;
+
+      // Gunning Fog
+      const complexWords = words.filter(w => countSyllables(w) >= 3).length;
+      const fog = totalWords > 0 && totalSentences > 0
+        ? 0.4 * ( (totalWords / totalSentences) + 100 * (complexWords / totalWords) )
+        : 0;
+
+      // Coleman‑Liau
+      const L = totalWords > 0 ? (totalChars / totalWords) * 100 : 0;
+      const S_cl = totalSentences > 0 ? (totalSentences / totalWords) * 100 : 0;
+      const coleman = totalWords > 0 ? (0.0588 * L - 0.296 * S_cl - 15.8) : 0;
+
+      // SMOG
+      const smog = totalSentences >= 3
+        ? 1.0430 * Math.sqrt(complexWords * (30 / totalSentences)) + 3.1291
+        : 0;
+
+      // Automated Readability Index
+      const ari = totalWords > 0 && totalSentences > 0
+        ? 4.71 * (totalChars / totalWords) + 0.5 * (totalWords / totalSentences) - 21.43
+        : 0;
+
+      // hard words (3+ syllables) and long sentences (>25 words)
+      const hardWordsSet = new Set();
+      words.forEach(w => { if (countSyllables(w) >= 3) hardWordsSet.add(w.toLowerCase()); });
+      const longSentences = cleanSentences.filter(s => {
+        const wc = (s.match(/[a-zA-Z0-9]+(?:['’][a-zA-Z]+)?/g) || []).length;
+        return wc > 25;
+      });
+
+      return {
+        totalWords, totalSentences, totalParagraphs, avgWordsPerSentence, avgSyllablesPerWord,
+        fleschEase, fleschGrade, fog, coleman, smog, ari,
+        hardWords: [...hardWordsSet].slice(0, 30),
+        longSentences: longSentences.slice(0, 15),
+        totalSyllables
+      };
+    }
+
+    function emptyResult() {
+      return {
+        totalWords:0, totalSentences:0, totalParagraphs:0, avgWordsPerSentence:0, avgSyllablesPerWord:0,
+        fleschEase:0, fleschGrade:0, fog:0, coleman:0, smog:0, ari:0,
+        hardWords:[], longSentences:[], totalSyllables:0
+      };
+    }
+
+    // ---------- UI update ----------
+    function updateUI() {
+      const text = textarea.value;
+      const data = analyze(text);
+      // stats panel
+      let html = `
+        <div class="stat-row">
+          <div class="stat-item"><span class="label">words</span><span class="value">${data.totalWords}</span></div>
+          <div class="stat-item"><span class="label">sentences</span><span class="value">${data.totalSentences}</span></div>
+          <div class="stat-item"><span class="label">paragraphs</span><span class="value">${data.totalParagraphs}</span></div>
+          <div class="stat-item"><span class="label">syllables</span><span class="value">${data.totalSyllables}</span></div>
+        </div>
+        <div class="stat-row" style="margin-bottom:0.8rem;">
+          <div class="stat-item"><span class="label">avg words/sent</span><span class="value">${data.avgWordsPerSentence.toFixed(1)}</span></div>
+          <div class="stat-item"><span class="label">avg syll/word</span><span class="value">${data.avgSyllablesPerWord.toFixed(2)}</span></div>
+        </div>
+        <div class="gauge-grid">
+          ${gaugeCard('Flesch Reading Ease', data.fleschEase, 0, 100, true)}
+          ${gaugeCard('Flesch‑Kincaid Grade', data.fleschGrade, 0, 20, false)}
+          ${gaugeCard('Gunning Fog', data.fog, 0, 25, false)}
+          ${gaugeCard('Coleman‑Liau', data.coleman, 0, 25, false)}
+          ${gaugeCard('SMOG Index', data.smog, 0, 20, false)}
+          ${gaugeCard('Automated Readability', data.ari, 0, 20, false)}
+        </div>
+        <div class="audience-box">
+          <div class="audience-title">🎯 target audience</div>
+          <div class="audience-recommend">${recommendAudience(data)}</div>
+        </div>
+      `;
+      statsPanel.innerHTML = html;
+
+      // highlight tags
+      let tags = '';
+      if (data.hardWords.length > 0) {
+        tags += data.hardWords.slice(0, 20).map(w => `<span class="tag tag-hard">🔴 ${w}</span>`).join(' ');
+      }
+      if (data.longSentences.length > 0) {
+        tags += ' <span style="color:#555;margin:0 4px;">|</span> ';
+        tags += data.longSentences.map(s => `<span class="tag tag-long">📏 ${s.slice(0, 40)}…</span>`).join(' ');
+      }
+      if (!tags) tags = '<span style="color:#666;">No complex sentences or hard words found.</span>';
+      tagContainer.innerHTML = tags;
+    }
+
+    function gaugeCard(name, value, min, max, isFlesch) {
+      let v = Math.min(max, Math.max(min, value));
+      let percent = max > min ? ((v - min) / (max - min)) * 100 : 0;
+      let color = '#4fc3f7';
+      if (isFlesch) {
+        if (v < 30) color = '#f75f5f';
+        else if (v < 60) color = '#f7a84f';
+        else if (v < 80) color = '#8bc34a';
+        else color = '#4fc3f7';
+      } else {
+        if (v > 14) color = '#f75f5f';
+        else if (v > 9) color = '#f7a84f';
+        else if (v > 5) color = '#8bc34a';
+        else color = '#4fc3f7';
+      }
+      const displayVal = value.toFixed(1);
+      return `
+        <div class="gauge-card">
+          <div class="gauge-header">
+            <span class="gauge-name">${name}</span>
+            <span class="gauge-value">${displayVal}</span>
+          </div>
+          <div class="gauge-bar-bg"><div class="gauge-fill" style="width:${percent}%;background:${color};"></div></div>
+          <div class="gauge-label"><span>${min}</span><span>${max}</span></div>
+        </div>
+      `;
+    }
+
+    function recommendAudience(data) {
+      const f = data.fleschEase;
+      const g = data.fleschGrade;
+      if (f >= 80 || g <= 5) return '📘 5th grader / very easy';
+      if (f >= 60 || g <= 8) return '📙 Middle school / plain English';
+      if (f >= 40 || g <= 12) return '📗 High school / fairly difficult';
+      if (f >= 20 || g <= 16) return '📕 College / difficult';
+      return '📚 Professional / very difficult';
+    }
+
+    // initial render
+    updateUI();
+    textarea.addEventListener('input', updateUI);
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tone Analyzer — Detect Writing Tone & Sentiment</title>
+  <meta name="description" content="Interactive tone analysis tool: detect sentiment, tone categories, emotions with visual charts. Paste text and get instant feedback.">
+  <link rel="canonical" href="https://writingassistant.org/tools/tone-analyzer">
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Tone Analyzer",
+    "url": "https://writingassistant.org/tone-analyzer",
+    "description": "Detect writing tone, sentiment, and emotions with keyword analysis and pattern detection.",
+    "applicationCategory": "Writing",
+    "operatingSystem": "All"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does the tone analyzer work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It uses keyword dictionaries (200+ words), sentence pattern analysis (exclamations, questions, passive voice) to detect sentiment, tone categories, and emotions."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What tone categories are detected?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Formal, casual, confident, tentative, friendly, aggressive, humorous, sarcastic."
+        }
+      }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://writingassistant.org/" },
+      { "@type": "ListItem", "position": 2, "name": "Tone Analyzer", "item": "https://writingassistant.org/tone-analyzer" }
+    ]
+  }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0a; color: #e0e0e0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; padding: 20px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    h1, h2, h3 { font-weight: 400; letter-spacing: 0.3px; }
+    h1 { font-size: 2.2rem; margin-bottom: 0.25rem; border-left: 4px solid #4fc3f7; padding-left: 1rem; }
+    .subhead { color: #9e9e9e; margin-bottom: 2rem; margin-top: 0.25rem; }
+    .card { background: #1a1a1a; border-radius: 16px; padding: 1.8rem; margin-bottom: 2rem; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+    .flex-row { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .flex-col { flex: 1; min-width: 240px; }
+    textarea { width: 100%; background: #121212; border: 1px solid #333; color: #e0e0e0; border-radius: 12px; padding: 1rem; font-size: 1rem; resize: vertical; min-height: 140px; }
+    textarea:focus { outline: none; border-color: #4fc3f7; box-shadow: 0 0 0 2px rgba(79,195,247,0.2); }
+    .btn-group { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1rem 0 0.5rem; }
+    .btn { background: #2a2a2a; border: none; color: #e0e0e0; padding: 0.6rem 1.4rem; border-radius: 40px; font-size: 0.9rem; cursor: pointer; transition: 0.2s; border: 1px solid #333; }
+    .btn:hover { background: #3a3a3a; border-color: #4fc3f7; }
+    .btn-primary { background: #0d47a1; border-color: #1565c0; color: white; }
+    .btn-primary:hover { background: #1565c0; }
+    .highlight-box { background: #121212; border-radius: 12px; padding: 1rem; margin: 1.2rem 0 0.5rem; border-left: 3px solid #4fc3f7; }
+    .highlight-text { line-height: 1.8; word-break: break-word; }
+    .highlight-text mark { padding: 0.1rem 0.2rem; border-radius: 6px; background: transparent; }
+    .sentiment-bar { height: 12px; border-radius: 20px; background: #2a2a2a; margin: 0.5rem 0 1rem; display: flex; overflow: hidden; }
+    .sentiment-bar span { display: block; height: 100%; transition: width 0.3s; }
+    .bar-positive { background: #4caf50; }
+    .bar-neutral { background: #9e9e9e; }
+    .bar-negative { background: #f44336; }
+    .tag { display: inline-block; background: #2a2a2a; padding: 0.3rem 0.9rem; border-radius: 30px; font-size: 0.8rem; margin: 0.2rem 0.15rem; border: 1px solid #3a3a3a; }
+    .tag-formal { border-color: #7e57c2; color: #b39ddb; }
+    .tag-casual { border-color: #ffb74d; color: #ffcc80; }
+    .tag-confident { border-color: #42a5f5; color: #90caf9; }
+    .tag-tentative { border-color: #ffa726; color: #ffcc80; }
+    .tag-friendly { border-color: #66bb6a; color: #a5d6a7; }
+    .tag-aggressive { border-color: #ef5350; color: #ef9a9a; }
+    .tag-humorous { border-color: #ab47bc; color: #ce93d8; }
+    .tag-sarcastic { border-color: #26a69a; color: #80cbc4; }
+    .emotion-badge { display: inline-flex; align-items: center; gap: 6px; background: #1e1e1e; border-radius: 30px; padding: 0.3rem 1rem; margin: 0.2rem; border: 1px solid #333; }
+    .emotion-badge .emoji { font-size: 1.2rem; }
+    .bar-chart { margin: 0.8rem 0; }
+    .bar-item { display: flex; align-items: center; gap: 0.6rem; margin: 0.4rem 0; }
+    .bar-label { width: 80px; font-size: 0.85rem; color: #bdbdbd; }
+    .bar-fill { flex: 1; height: 14px; background: #2a2a2a; border-radius: 20px; overflow: hidden; }
+    .bar-fill span { display: block; height: 100%; background: #4fc3f7; border-radius: 20px; transition: width 0.3s; }
+    .bar-percent { width: 40px; text-align: right; font-size: 0.8rem; color: #aaa; }
+    .adjust-list { list-style: none; margin-top: 1rem; }
+    .adjust-list li { padding: 0.5rem 0; border-bottom: 1px solid #2a2a2a; display: flex; gap: 0.8rem; align-items: baseline; }
+    .adjust-list li::before { content: '→'; color: #4fc3f7; }
+    footer { text-align: center; padding: 2rem 0 0.5rem; color: #666; }
+    footer a { color: #4fc3f7; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .example-badge { background: #1e3a5f; color: #b0d4f1; border-radius: 30px; padding: 0.2rem 1rem; font-size: 0.75rem; }
+  </style>
+
+    <meta property="og:title" content="Tone Analyzer — Detect Writing Tone & Sentiment">
+    <meta property="og:description" content="Interactive tone analysis tool: detect sentiment, tone categories, emotions with visual charts. Paste text and get instant feedback.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://writingassistant.org/tools/tone-analyzer">
+</head>
+<body>
+<div class="container">
+  <h1>Tone Analyzer</h1>
+  <div class="subhead">Detect sentiment, tone categories & emotions — with keyword & pattern analysis</div>
+
+  <!-- Input -->
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+      <h2>✏️ Paste your text</h2>
+      <div class="btn-group">
+        <button class="btn" data-example="0">📄 Formal proposal</button>
+        <button class="btn" data-example="1">💬 Friendly email</button>
+        <button class="btn" data-example="2">😡 Angry review</button>
+      </div>
+    </div>
+    <textarea id="textInput" placeholder="Write or paste at least 3-4 sentences...">We are delighted to announce the successful completion of the merger. This strategic move will strengthen our market position and drive innovation. We look forward to a prosperous future together.</textarea>
+    <div class="btn-group" style="margin-top: 0.8rem;">
+      <button class="btn btn-primary" id="analyzeBtn">🔍 Analyze tone</button>
+      <button class="btn" id="clearBtn">Clear</button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="resultsArea">
+    <!-- Highlighted text -->
+    <div class="card">
+      <h3>🔎 Tone‑indicative words</h3>
+      <div class="highlight-box">
+        <div id="highlightedText" class="highlight-text">We are delighted to announce the successful completion of the merger. This strategic move will strengthen our market position and drive innovation. We look forward to a prosperous future together.</div>
+      </div>
+    </div>
+
+    <div class="flex-row">
+      <!-- Sentiment + emotions -->
+      <div class="card flex-col">
+        <h3>📊 Overall sentiment</h3>
+        <div id="sentimentLabel">Positive · 78%</div>
+        <div class="sentiment-bar" id="sentimentBar">
+          <span class="bar-positive" style="width: 78%"></span>
+          <span class="bar-neutral" style="width: 15%"></span>
+          <span class="bar-negative" style="width: 7%"></span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa;">
+          <span>😊 Positive</span><span>😐 Neutral</span><span>😠 Negative</span>
+        </div>
+        <h3 style="margin-top: 1.8rem;">❤️ Emotions</h3>
+        <div id="emotionContainer">
+          <span class="emotion-badge"><span class="emoji">😄</span> joy 42%</span>
+          <span class="emotion-badge"><span class="emoji">😢</span> sadness 5%</span>
+          <span class="emotion-badge"><span class="emoji">😡</span> anger 3%</span>
+          <span class="emotion-badge"><span class="emoji">😨</span> fear 2%</span>
+          <span class="emotion-badge"><span class="emoji">😲</span> surprise 8%</span>
+          <span class="emotion-badge"><span class="emoji">🤢</span> disgust 1%</span>
+        </div>
+      </div>
+
+      <!-- Tone categories -->
+      <div class="card flex-col">
+        <h3>🎭 Tone categories</h3>
+        <div id="toneBars" class="bar-chart">
+          <div class="bar-item"><span class="bar-label">Formal</span><div class="bar-fill"><span style="width: 85%"></span></div><span class="bar-percent">85%</span></div>
+          <div class="bar-item"><span class="bar-label">Casual</span><div class="bar-fill"><span style="width: 20%"></span></div><span class="bar-percent">20%</span></div>
+          <div class="bar-item"><span class="bar-label">Confident</span><div class="bar-fill"><span style="width: 75%"></span></div><span class="bar-percent">75%</span></div>
+          <div class="bar-item"><span class="bar-label">Tentative</span><div class="bar-fill"><span style="width: 15%"></span></div><span class="bar-percent">15%</span></div>
+          <div class="bar-item"><span class="bar-label">Friendly</span><div class="bar-fill"><span style="width: 60%"></span></div><span class="bar-percent">60%</span></div>
+          <div class="bar-item"><span class="bar-label">Aggressive</span><div class="bar-fill"><span style="width: 10%"></span></div><span class="bar-percent">10%</span></div>
+          <div class="bar-item"><span class="bar-label">Humorous</span><div class="bar-fill"><span style="width: 12%"></span></div><span class="bar-percent">12%</span></div>
+          <div class="bar-item"><span class="bar-label">Sarcastic</span><div class="bar-fill"><span style="width: 5%"></span></div><span class="bar-percent">5%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tone adjustments -->
+    <div class="card">
+      <h3>💡 Suggest tone adjustments</h3>
+      <ul id="adjustList" class="adjust-list">
+        <li>Your text sounds <strong>formal</strong>. To make it more casual, use shorter sentences and conversational words.</li>
+        <li>Add personal pronouns (we, you) to increase friendliness.</li>
+        <li>To sound more confident, reduce hedging words (might, maybe, perhaps).</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <p><a href="https://writingassistant.org/">← writingassistant.org</a> · Tone Analyzer tool</p>
+  </footer>
+</div>
+
+<script>
+  (function() {
+    // ---------- DICTIONARIES (200+ mapping) ----------
+    const TONE_WORDS = {
+      formal: ['therefore','hence','thus','furthermore','nevertheless','notwithstanding','consequently','accordingly','moreover','subsequently','commence','conclude','demonstrate','establish','indicate','propose','utilize','implement','facilitate','obtain','regarding','provided','pursuant','per','shall','hereby','herein','hereafter','therein','thereafter','wherein','whereby','endeavor','ascertain','expedite','terminate','transmit','acquire','additionally','further','likewise','nonetheless','notably'],
+      casual: ['hey','yeah','nah','cool','awesome','guys','dude','buddy','chill','wanna','gonna','kinda','sorta','stuff','thingy','whatever','okay','alright','sure','totally','literally','basically','anyway','well','so','like','you know','i mean','just','maybe'],
+      confident: ['absolutely','certainly','definitely','undoubtedly','without doubt','clearly','obviously','surely','always','never','must','will','shall','strongly','firmly','confident','assured','convinced','positive','resolute','unwavering','assertive','dominant','command'],
+      tentative: ['maybe','perhaps','possibly','might','could','may','seems','appears','suggests','indicates','tends','somewhat','rather','quite','relatively','a bit','a little','sort of','kind of','i think','i believe','i suppose','i guess','probably','potentially'],
+      friendly: ['friend','kind','warm','welcome','glad','happy','delighted','pleased','thank','thanks','appreciate','grateful','lovely','nice','sweet','caring','supportive','helpful','thoughtful','considerate','gentle','smile','cheerful','wonderful','fantastic','great'],
+      aggressive: ['hate','terrible','awful','horrible','disgusting','outrage','intolerable','unacceptable','ridiculous','absurd','attack','destroy','ruin','damage','threat','hostile','furious','angry','violent','force','demand','must','never','worst','pathetic','stupid','idiotic'],
+      humorous: ['funny','hilarious','lol','laugh','joke','comedy','silly','witty','amusing','humor','absurd','ridiculous','laughable','satire','parody','pun','whimsical','zany','prank','giggle','chuckle','humorous','comedic'],
+      sarcastic: ['oh great','wonderful','yeah right','sure','obviously','brilliant','fantastic','sarcasm','ironic','sarcastic','mock','satirical','tongue-in-cheek','oh really','how nice','what a surprise','big deal','as if','totally']
+    };
+    // sentiment positive / negative
+    const POSITIVE_WORDS = ['great','excellent','amazing','wonderful','fantastic','good','happy','delighted','love','beautiful','perfect','outstanding','superb','brilliant','awesome','nice','pleased','positive','optimistic','joy','success','win','benefit','advantage','best','remarkable','impressive','splendid','glad','grateful','thank','appreciate','thrilled','ecstatic','favorable'];
+    const NEGATIVE_WORDS = ['bad','terrible','awful','horrible','hate','angry','sad','depressed','worst','ugly','disgusting','horrific','dreadful','poor','negative','failure','loss','damage','hurt','pain','crisis','disaster','tragic','miserable','unpleasant','annoying','frustrating','offensive','violent','aggressive','cruel','nasty','toxic'];
+    // emotion keywords
+    const EMOTION_WORDS = {
+      joy: ['happy','joy','delight','glad','cheerful','ecstatic','thrilled','elated','jubilant','merry','upbeat','excited','euphoric','blissful','radiant','smile','laugh','pleased','wonderful','fantastic'],
+      sadness: ['sad','unhappy','depressed','gloomy','melancholy','sorrow','grief','heartbroken','miserable','down','tearful','regret','lonely','hopeless','somber','mournful','disappointed','upset','crying'],
+      anger: ['angry','furious','outraged','irate','livid','mad','enraged','annoyed','irritated','frustrated','hostile','aggressive','rage','wrath','fuming','seething','bitter','resentful','indignant'],
+      fear: ['afraid','scared','fearful','terrified','anxious','nervous','worried','panicked','dread','horror','alarmed','frightened','shaken','trembling','uneasy','apprehensive','petrified','terrified'],
+      surprise: ['surprise','shock','amazed','astonished','stunned','astounded','startled','dumbfounded','speechless','wonder','awe','bewildered','perplexed','staggering','unexpected','incredible'],
+      disgust: ['disgust','revolting','repulsive','nauseating','gross','yuck','ew','appalling','abhorrent','detest','loathsome','sickening','vile','odious','repugnant']
+    };
+
+    // ---------- PATTERN HELPERS ----------
+    function countExclamations(text) { return (text.match(/!/g) || []).length; }
+    function countQuestions(text) { return (text.match(/\?/g) || []).length; }
+    function countPassiveVoice(text) {
+      const passive = text.match(/\b(am|is|are|was|were|be|been|being)\s+(\w+ed|written|driven|given|known|taken|broken|spoken|built|created|designed|established|implemented|managed|processed|reported|shown)\b/gi);
+      return passive ? passive.length : 0;
+    }
+
+    // ---------- ANALYSIS ENGINE ----------
+    function analyze(text) {
+      if (!text.trim()) return null;
+      const lower = text.toLowerCase();
+      const words = lower.split(/\s+/);
+      const wordSet = new Set(words);
+
+      // Tone scores
+      let toneScores = { formal:0, casual:0, confident:0, tentative:0, friendly:0, aggressive:0, humorous:0, sarcastic:0 };
+      for (let [tone, list] of Object.entries(TONE_WORDS)) {
+        let score = 0;
+        for (let w of list) {
+          if (lower.includes(w)) score += 1;
+          // also check as whole word
+          if (wordSet.has(w)) score += 1;
+        }
+        toneScores[tone] = score;
+      }
+
+      // Sentiment
+      let posScore = 0, negScore = 0;
+      for (let w of POSITIVE_WORDS) { if (lower.includes(w)) posScore += 1; }
+      for (let w of NEGATIVE_WORDS) { if (lower.includes(w)) negScore += 1; }
+
+      // Emotion scores
+      let emotionScores = { joy:0, sadness:0, anger:0, fear:0, surprise:0, disgust:0 };
+      for (let [em, list] of Object.entries(EMOTION_WORDS)) {
+        let s = 0;
+        for (let w of list) { if (lower.includes(w)) s += 1; }
+        emotionScores[em] = s;
+      }
+
+      // Pattern boosts
+      const exclam = countExclamations(text);
+      const quest = countQuestions(text);
+      const passive = countPassiveVoice(text);
+
+      // exclam -> excitement (joy, surprise), confident, aggressive
+      if (exclam > 0) {
+        toneScores.confident += exclam * 0.8;
+        toneScores.aggressive += exclam * 0.5;
+        emotionScores.joy += exclam * 0.6;
+        emotionScores.surprise += exclam * 0.5;
+      }
+      // questions -> tentative, uncertainty
+      if (quest > 0) {
+        toneScores.tentative += quest * 1.2;
+        toneScores.formal += quest * 0.2;
+      }
+      // passive voice -> formal
+      if (passive > 0) {
+        toneScores.formal += passive * 1.5;
+        toneScores.confident -= passive * 0.2;
+      }
+
+      // Normalize tones to percentages (max cap)
+      const maxTone = Math.max(...Object.values(toneScores), 1);
+      let tonePercent = {};
+      for (let [k, v] of Object.entries(toneScores)) {
+        let raw = (v / (maxTone || 1)) * 100;
+        tonePercent[k] = Math.min(100, Math.round(raw));
+      }
+
+      // Sentiment percentages (softmax style)
+      const totalSent = posScore + negScore + Math.max(0, words.length*0.1);
+      let posP = Math.round((posScore / (totalSent||1)) * 100);
+      let negP = Math.round((negScore / (totalSent||1)) * 100);
+      let neutP = 100 - posP - negP;
+      if (neutP < 0) neutP = 0;
+      // ensure sum 100
+      const sum = posP+negP+neutP;
+      if (sum !== 100) { posP += (100-sum); }
+
+      // Emotion percentages
+      const totalEm = Object.values(emotionScores).reduce((a,b)=>a+b,0) || 1;
+      let emotionPercent = {};
+      for (let [k, v] of Object.entries(emotionScores)) {
+        emotionPercent[k] = Math.round((v / totalEm) * 100);
+      }
+
+      // Build highlighted text (color mapping)
+      const colorMap = {
+        formal: '#7e57c2', casual: '#ffb74d', confident: '#42a5f5', tentative: '#ffa726',
+        friendly: '#66bb6a', aggressive: '#ef5350', humorous: '#ab47bc', sarcastic: '#26a69a'
+      };
+      let html = text;
+      // sort by longest word to avoid partial overlap
+      let allToneWords = [];
+      for (let [tone, list] of Object.entries(TONE_WORDS)) {
+        for (let w of list) allToneWords.push({word: w, tone});
+      }
+      allToneWords.sort((a,b) => b.word.length - a.word.length);
+      for (let {word, tone} of allToneWords) {
+        const color = colorMap[tone] || '#4fc3f7';
+        const regex = new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+        html = html.replace(regex, (match) => `<mark style="background:${color}33; border-bottom:2px solid ${color};">${match}</mark>`);
+      }
+
+      // Tone adjustments suggestions
+      let suggestions = [];
+      if (tonePercent.formal > 60) suggestions.push('Your text sounds <strong>formal</strong>. Use shorter sentences and conversational words to make it more casual.');
+      else suggestions.push('To increase formality, consider using more precise vocabulary and passive structures.');
+      if (tonePercent.aggressive > 40) suggestions.push('Tone is <strong>aggressive</strong>. Soften language with polite phrases and qualifiers.');
+      else if (tonePercent.friendly < 30) suggestions.push('Add personal pronouns (we, you) and appreciative words to boost friendliness.');
+      if (tonePercent.tentative > 50) suggestions.push('Reduce hedging words (maybe, perhaps) to sound more confident.');
+      if (tonePercent.confident < 30) suggestions.push('Use strong, affirmative language (definitely, certainly) to project confidence.');
+      if (exclam > 2) suggestions.push('You have many exclamations — great for excitement, but may seem less formal.');
+      if (quest > 2) suggestions.push('Several questions create a reflective or uncertain tone.');
+      if (suggestions.length === 0) suggestions.push('Your tone is well balanced. Consider your audience for further refinement.');
+
+      return { tonePercent, posP, negP, neutP, emotionPercent, highlighted: html, suggestions };
+    }
+
+    // ---------- UI UPDATE ----------
+    function updateUI(text) {
+      const result = analyze(text);
+      if (!result) return;
+
+      // highlighted
+      document.getElementById('highlightedText').innerHTML = result.highlighted;
+
+      // sentiment
+      const pos = result.posP, neg = result.negP, neut = result.neutP;
+      document.getElementById('sentimentLabel').textContent = 
+        (pos > neg ? 'Positive' : (neg > pos ? 'Negative' : 'Neutral')) + ` · ${pos}% positive, ${neg}% negative`;
+      const bar = document.getElementById('sentimentBar');
+      bar.innerHTML = `<span class="bar-positive" style="width:${pos}%"></span><span class="bar-neutral" style="width:${neut}%"></span><span class="bar-negative" style="width:${neg}%"></span>`;
+
+      // emotions
+      const emo = result.emotionPercent;
+      const emojiMap = { joy:'😄', sadness:'😢', anger:'😡', fear:'😨', surprise:'😲', disgust:'🤢' };
+      let emoHtml = '';
+      for (let [k, v] of Object.entries(emo)) {
+        emoHtml += `<span class="emotion-badge"><span class="emoji">${emojiMap[k]||'❓'}</span> ${k} ${v}%</span> `;
+      }
+      document.getElementById('emotionContainer').innerHTML = emoHtml;
+
+      // tone bars
+      const tone = result.tonePercent;
+      const toneOrder = ['formal','casual','confident','tentative','friendly','aggressive','humorous','sarcastic'];
+      let barsHtml = '';
+      for (let t of toneOrder) {
+        const val = tone[t] || 0;
+        barsHtml += `<div class="bar-item"><span class="bar-label">${t.charAt(0).toUpperCase()+t.slice(1)}</span><div class="bar-fill"><span style="width:${val}%"></span></div><span class="bar-percent">${val}%</span></div>`;
+      }
+      document.getElementById('toneBars').innerHTML = barsHtml;
+
+      // suggestions
+      const list = document.getElementById('adjustList');
+      list.innerHTML = result.suggestions.map(s => `<li>${s}</li>`).join('');
+    }
+
+    // ---------- EXAMPLE TEXTS ----------
+    const examples = [
+      `We are delighted to announce the successful completion of the merger. This strategic move will strengthen our market position and drive innovation. We look forward to a prosperous future together.`,
+      `Hey guys! Just wanted to say thanks for the amazing support. You're all awesome! Let's grab coffee sometime and catch up. 😊`,
+      `This is absolutely the worst service I have ever experienced. The staff was rude and aggressive. I am furious and demand a full refund! Never again.`
+    ];
+
+    // ---------- INIT ----------
+    const textarea = document.getElementById('textInput');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const clearBtn = document.getElementById('clearBtn');
+
+    function runAnalysis() {
+      const text = textarea.value.trim();
+      if (!text) {
+        alert('Please paste some text to analyze.');
+        return;
+      }
+      updateUI(text);
+    }
+
+    analyzeBtn.addEventListener('click', runAnalysis);
+
+    clearBtn.addEventListener('click', () => {
+      textarea.value = '';
+      document.getElementById('highlightedText').innerHTML = '';
+      document.getElementById('sentimentLabel').textContent = '—';
+      document.getElementById('sentimentBar').innerHTML = '';
+      document.getElementById('emotionContainer').innerHTML = '';
+      document.getElementById('toneBars').innerHTML = '';
+      document.getElementById('adjustList').innerHTML = '<li>Waiting for analysis…</li>';
+    });
+
+    // example buttons
+    document.querySelectorAll('[data-example]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(e.target.getAttribute('data-example'), 10);
+        if (examples[idx]) {
+          textarea.value = examples[idx];
+          runAnalysis();
+        }
+      });
+    });
+
+    // auto-analyze on load
+    window.addEventListener('load', () => {
+      runAnalysis();
+    });
+  })();
+</script>
+</body>
+</html>

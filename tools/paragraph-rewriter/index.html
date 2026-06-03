@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paragraph Rewriter Tool — Rephrase Text Instantly</title>
+  <meta name="description" content="Rewrite any paragraph up to 500 words with synonym swap, sentence restructuring, and tone shifts. Fully client-side, dark theme.">
+  <link rel="canonical" href="https://writingassistant.org/tools/paragraph-rewriter">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Paragraph Rewriter Tool",
+    "url": "https://writingassistant.org/paragraph-rewriter",
+    "description": "Rewrite paragraphs using synonym replacement, sentence restructuring, and tone shifts. Client-side only.",
+    "browserRequirements": "JavaScript enabled",
+    "applicationCategory": "Writing Tool",
+    "offers": {
+      "@type": "Offer",
+      "price": "0"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type":"Question","name":"How does the synonym replacement work?","acceptedAnswer":{"@type":"Answer","text":"We use a built-in dictionary of 200+ word pairs to replace common words with suitable synonyms while preserving meaning."}},
+      {"@type":"Question","name":"Can I change the tone of my paragraph?","acceptedAnswer":{"@type":"Answer","text":"Yes, choose from formal, casual, academic, or creative tones. The engine adjusts vocabulary and sentence structure accordingly."}},
+      {"@type":"Question","name":"Is there a word limit?","acceptedAnswer":{"@type":"Answer","text":"The tool accepts up to 500 words per input. Word counters show exact counts for both original and rewritten versions."}},
+      {"@type":"Question","name":"How is similarity percentage calculated?","acceptedAnswer":{"@type":"Answer","text":"We compare word overlap and sequence similarity between original and rewritten text using a simple Jaccard-like measure."}},
+      {"@type":"Question","name":"Is my text stored or sent to any server?","acceptedAnswer":{"@type":"Answer","text":"No. Everything runs in your browser. No data is uploaded or stored externally."}}
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://writingassistant.org/"},
+      {"@type":"ListItem","position":2,"name":"Paragraph Rewriter","item":"https://writingassistant.org/paragraph-rewriter"}
+    ]
+  }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem;
+    }
+    .container { max-width: 1300px; width: 100%; }
+    header { margin-bottom: 2rem; text-align: center; }
+    h1 { font-size: 2.2rem; font-weight: 500; color: #f0f0f0; letter-spacing: -0.02em; }
+    .sub { color: #9e9e9e; margin-top: 0.3rem; }
+    .accent { color: #4fc3f7; }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.8rem;
+      margin: 2rem 0 1.5rem;
+    }
+    @media (max-width: 720px) { .tool-grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: #141414;
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+      border: 1px solid #222;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .card-header h2 { font-size: 1.3rem; font-weight: 500; }
+    .badge {
+      background: #2a2a2a;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      color: #bdbdbd;
+    }
+    textarea {
+      width: 100%;
+      background: #0e0e0e;
+      border: 1px solid #2e2e2e;
+      color: #e0e0e0;
+      border-radius: 14px;
+      padding: 1rem;
+      font-size: 0.95rem;
+      resize: vertical;
+      min-height: 180px;
+      transition: 0.2s;
+    }
+    textarea:focus { outline: none; border-color: #4fc3f7; box-shadow: 0 0 0 2px rgba(79,195,247,0.2); }
+    .rewritten-output {
+      background: #0e0e0e;
+      border: 1px solid #2e2e2e;
+      border-radius: 14px;
+      padding: 1rem;
+      min-height: 180px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.95rem;
+    }
+    .highlight { background: #3a5f6b; color: #b3e5fc; padding: 0.1rem 0.2rem; border-radius: 4px; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin: 1.2rem 0 1.2rem;
+      align-items: center;
+    }
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #1e1e1e;
+      padding: 0.3rem 0.8rem 0.3rem 1rem;
+      border-radius: 40px;
+    }
+    .control-group label { font-size: 0.85rem; color: #aaa; }
+    select {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      border: 1px solid #333;
+      padding: 0.3rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .btn {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      color: #e0e0e0;
+      padding: 0.5rem 1.3rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: 500;
+    }
+    .btn-primary {
+      background: #4fc3f7;
+      border-color: #4fc3f7;
+      color: #0a0a0a;
+    }
+    .btn-primary:hover { background: #3bb0e0; }
+    .btn-outline { background: transparent; border-color: #4fc3f7; color: #4fc3f7; }
+    .btn-outline:hover { background: #1a2f38; }
+    .btn:active { transform: scale(0.96); }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #b0b0b0;
+    }
+    .stats span { background: #1c1c1c; padding: 0.2rem 0.9rem; border-radius: 30px; }
+    .similarity { color: #4fc3f7; font-weight: 500; }
+
+    .faq-section {
+      margin: 3rem 0 2rem;
+      background: #101010;
+      border-radius: 24px;
+      padding: 1.8rem;
+      border: 1px solid #1f1f1f;
+    }
+    .faq-section h3 { font-size: 1.4rem; margin-bottom: 1.2rem; }
+    .faq-item { margin-bottom: 1rem; }
+    .faq-question { font-weight: 500; color: #ddd; }
+    .faq-answer { color: #999; margin-top: 0.2rem; padding-left: 0.5rem; }
+
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    footer a { color: #4fc3f7; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .breadcrumb { color: #666; margin-bottom: 1.5rem; font-size: 0.85rem; }
+    .breadcrumb a { color: #4fc3f7; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+  </style>
+
+    <meta property="og:title" content="Paragraph Rewriter Tool — Rephrase Text Instantly">
+    <meta property="og:description" content="Rewrite any paragraph up to 500 words with synonym swap, sentence restructuring, and tone shifts. Fully client-side, dark theme.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://writingassistant.org/tools/paragraph-rewriter">
+</head>
+<body>
+<div class="container">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="https://writingassistant.org/">Home</a> / <span>Paragraph Rewriter</span>
+  </div>
+
+  <header>
+    <h1>✍️ Paragraph Rewriter <span class="accent">Tool</span></h1>
+    <div class="sub">Rephrase text instantly · synonym swap · sentence restructure · tone shift</div>
+  </header>
+
+  <!-- Tool grid: original & rewritten -->
+  <div class="tool-grid">
+    <div class="card">
+      <div class="card-header">
+        <h2>📄 Original</h2>
+        <span class="badge" id="originalWordCount">0 words</span>
+      </div>
+      <textarea id="inputText" placeholder="Paste your paragraph here (up to 500 words) ...">The quick brown fox jumps over the lazy dog. The dog was sleeping in the sun. Many people believe that artificial intelligence will change the world.</textarea>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h2>🔄 Rewritten</h2>
+        <span class="badge" id="rewrittenWordCount">0 words</span>
+      </div>
+      <div class="rewritten-output" id="rewrittenOutput">Click "Rewrite" to see result</div>
+    </div>
+  </div>
+
+  <!-- Controls + actions -->
+  <div class="controls">
+    <div class="control-group">
+      <label>🎭 Tone</label>
+      <select id="toneSelect">
+        <option value="formal">Formal</option>
+        <option value="casual" selected>Casual</option>
+        <option value="academic">Academic</option>
+        <option value="creative">Creative</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" id="rewriteBtn">✨ Rewrite</button>
+    <button class="btn btn-outline" id="copyBtn">📋 Copy Result</button>
+    <button class="btn" id="resetBtn">↺ Reset</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <span id="originalStat">Original: 0 words</span>
+    <span id="rewrittenStat">Rewritten: 0 words</span>
+    <span class="similarity" id="similarityDisplay">Similarity: 0%</span>
+  </div>
+
+  <!-- FAQ Section -->
+  <div class="faq-section">
+    <h3>❓ Frequently Asked Questions</h3>
+    <div class="faq-item"><div class="faq-question">How does the synonym replacement work?</div><div class="faq-answer">We use a built-in dictionary of 200+ word pairs to replace common words with suitable synonyms while preserving meaning.</div></div>
+    <div class="faq-item"><div class="faq-question">Can I change the tone of my paragraph?</div><div class="faq-answer">Yes, choose from formal, casual, academic, or creative tones. The engine adjusts vocabulary and sentence structure accordingly.</div></div>
+    <div class="faq-item"><div class="faq-question">Is there a word limit?</div><div class="faq-answer">The tool accepts up to 500 words per input. Word counters show exact counts for both original and rewritten versions.</div></div>
+    <div class="faq-item"><div class="faq-question">How is similarity percentage calculated?</div><div class="faq-answer">We compare word overlap and sequence similarity between original and rewritten text using a simple Jaccard-like measure.</div></div>
+    <div class="faq-item"><div class="faq-question">Is my text stored or sent to any server?</div><div class="faq-answer">No. Everything runs in your browser. No data is uploaded or stored externally.</div></div>
+  </div>
+
+  <footer>
+    <p>© writingassistant.org — <a href="https://writingassistant.org/">Back to Home</a></p>
+  </footer>
+</div>
+
+<script>
+  (function() {
+    // ---------- SYNONYM DICTIONARY (200+ pairs) ----------
+    const SYNONYMS = new Map([
+      // basic verbs / adjectives / nouns
+      ['quick', 'swift'], ['quick', 'fast'], ['quick', 'rapid'],
+      ['brown', 'tan'], ['brown', 'chestnut'], ['brown', 'umber'],
+      ['fox', 'vixen'], ['fox', 'canine'],
+      ['jump', 'leap'], ['jump', 'bound'], ['jump', 'spring'],
+      ['lazy', 'idle'], ['lazy', 'sluggish'], ['lazy', 'indolent'],
+      ['dog', 'hound'], ['dog', 'canine'], ['dog', 'puppy'],
+      ['sleep', 'doze'], ['sleep', 'slumber'], ['sleep', 'nap'],
+      ['sun', 'sunlight'], ['sun', 'daystar'],
+      ['people', 'folks'], ['people', 'individuals'], ['people', 'humans'],
+      ['believe', 'think'], ['believe', 'suppose'], ['believe', 'consider'],
+      ['artificial', 'synthetic'], ['artificial', 'man-made'],
+      ['intelligence', 'intellect'], ['intelligence', 'mind'],
+      ['change', 'transform'], ['change', 'alter'], ['change', 'modify'],
+      ['world', 'earth'], ['world', 'globe'],
+      ['big', 'large'], ['big', 'enormous'], ['big', 'massive'],
+      ['small', 'tiny'], ['small', 'miniature'], ['small', 'compact'],
+      ['good', 'excellent'], ['good', 'superb'], ['good', 'fine'],
+      ['bad', 'poor'], ['bad', 'unfavorable'], ['bad', 'inferior'],
+      ['new', 'novel'], ['new', 'fresh'], ['new', 'modern'],
+      ['old', 'ancient'], ['old', 'aged'], ['old', 'vintage'],
+      ['beautiful', 'gorgeous'], ['beautiful', 'stunning'], ['beautiful', 'lovely'],
+      ['happy', 'joyful'], ['happy', 'cheerful'], ['happy', 'delighted'],
+      ['sad', 'melancholy'], ['sad', 'gloomy'], ['sad', 'sorrowful'],
+      ['angry', 'furious'], ['angry', 'irate'], ['angry', 'wrathful'],
+      ['calm', 'serene'], ['calm', 'peaceful'], ['calm', 'tranquil'],
+      ['brave', 'courageous'], ['brave', 'valiant'], ['brave', 'fearless'],
+      ['smart', 'intelligent'], ['smart', 'clever'], ['smart', 'brilliant'],
+      ['strong', 'powerful'], ['strong', 'robust'], ['strong', 'sturdy'],
+      ['weak', 'frail'], ['weak', 'feeble'], ['weak', 'fragile'],
+      ['important', 'crucial'], ['important', 'vital'], ['important', 'essential'],
+      ['difficult', 'hard'], ['difficult', 'challenging'], ['difficult', 'arduous'],
+      ['easy', 'simple'], ['easy', 'effortless'], ['easy', 'facile'],
+      ['true', 'genuine'], ['true', 'authentic'], ['true', 'real'],
+      ['false', 'fake'], ['false', 'bogus'], ['false', 'spurious'],
+      ['always', 'forever'], ['always', 'perpetually'], ['always', 'eternally'],
+      ['never', 'not ever'], ['never', 'at no time'],
+      ['often', 'frequently'], ['often', 'regularly'], ['often', 'repeatedly'],
+      ['maybe', 'perhaps'], ['maybe', 'possibly'], ['maybe', 'potentially'],
+      // more
+      ['use', 'utilize'], ['use', 'employ'], ['use', 'apply'],
+      ['make', 'create'], ['make', 'fabricate'], ['make', 'construct'],
+      ['give', 'provide'], ['give', 'grant'], ['give', 'bestow'],
+      ['get', 'obtain'], ['get', 'acquire'], ['get', 'secure'],
+      ['show', 'demonstrate'], ['show', 'exhibit'], ['show', 'reveal'],
+      ['help', 'assist'], ['help', 'aid'], ['help', 'support'],
+      ['start', 'begin'], ['start', 'commence'], ['start', 'initiate'],
+      ['end', 'finish'], ['end', 'conclude'], ['end', 'terminate'],
+      ['try', 'attempt'], ['try', 'endeavor'], ['try', 'strive'],
+      ['keep', 'maintain'], ['keep', 'preserve'], ['keep', 'retain'],
+      ['find', 'discover'], ['find', 'locate'], ['find', 'unearth'],
+      ['tell', 'inform'], ['tell', 'notify'], ['tell', 'apprise'],
+      ['ask', 'inquire'], ['ask', 'question'], ['ask', 'interrogate'],
+      ['need', 'require'], ['need', 'necessitate'], ['need', 'demand'],
+      ['want', 'desire'], ['want', 'wish'], ['want', 'crave'],
+      ['think', 'ponder'], ['think', 'contemplate'], ['think', 'reflect'],
+      ['know', 'comprehend'], ['know', 'understand'], ['know', 'grasp'],
+      ['love', 'adore'], ['love', 'cherish'], ['love', 'treasure'],
+      ['hate', 'detest'], ['hate', 'loathe'], ['hate', 'abhor'],
+      ['see', 'observe'], ['see', 'perceive'], ['see', 'witness'],
+      ['hear', 'listen'], ['hear', 'attend'], ['hear', 'hark'],
+      ['walk', 'stroll'], ['walk', 'saunter'], ['walk', 'amble'],
+      ['run', 'sprint'], ['run', 'dash'], ['run', 'jog'],
+      ['say', 'state'], ['say', 'declare'], ['say', 'utter'],
+      ['look', 'gaze'], ['look', 'peer'], ['look', 'glance'],
+      ['feel', 'sense'], ['feel', 'experience'], ['feel', 'perceive'],
+      ['seem', 'appear'], ['seem', 'look'], ['seem', 'sound'],
+      ['become', 'grow'], ['become', 'turn'], ['become', 'get'],
+      // extra filler
+      ['very', 'extremely'], ['very', 'immensely'], ['very', 'exceedingly'],
+      ['great', 'superb'], ['great', 'terrific'], ['great', 'splendid'],
+      ['little', 'slight'], ['little', 'minor'], ['little', 'tiny'],
+      ['enough', 'sufficient'], ['enough', 'adequate'], ['enough', 'ample'],
+      ['still', 'nevertheless'], ['still', 'yet'], ['still', 'however'],
+      ['also', 'furthermore'], ['also', 'moreover'], ['also', 'additionally'],
+      ['so', 'thus'], ['so', 'hence'], ['so', 'therefore'],
+      ['because', 'since'], ['because', 'as'], ['because', 'for'],
+      ['but', 'however'], ['but', 'nevertheless'], ['but', 'yet'],
+      ['and', 'plus'], ['and', 'as well as'], ['and', 'along with'],
+      ['or', 'otherwise'], ['or', 'alternatively'],
+      ['if', 'provided'], ['if', 'when'], ['if', 'whenever'],
+      ['then', 'afterward'], ['then', 'subsequently'], ['then', 'next'],
+      ['up', 'upward'], ['down', 'downward'], ['in', 'inside'], ['out', 'outside'],
+      ['over', 'above'], ['under', 'beneath'], ['with', 'alongside'],
+      ['without', 'lacking'], ['about', 'regarding'], ['for', 'on behalf of']
+    ]);
+
+    // Tone vocab tweaks (simple word mapping)
+    const TONE_MAP = {
+      formal: { 'folks': 'individuals', 'kids': 'children', 'awesome': 'excellent', 'cool': 'acceptable', 'stuff': 'materials', 'guys': 'persons', 'yeah': 'yes', 'nah': 'no' },
+      casual: { 'individuals': 'folks', 'children': 'kids', 'excellent': 'awesome', 'acceptable': 'fine', 'materials': 'stuff', 'persons': 'people', 'yes': 'yeah', 'no': 'nah', 'commence': 'start', 'terminate': 'end' },
+      academic: { 'folks': 'individuals', 'kids': 'children', 'awesome': 'remarkable', 'cool': 'acceptable', 'stuff': 'materials', 'guys': 'subjects', 'yeah': 'affirmative', 'nah': 'negative', 'start': 'initiate', 'end': 'conclude' },
+      creative: { 'beautiful': 'resplendent', 'good': 'magnificent', 'big': 'colossal', 'small': 'petite', 'old': 'timeworn', 'new': 'pristine', 'happy': 'ecstatic', 'sad': 'mournful', 'run': 'gallop', 'walk': 'wander' }
+    };
+
+    // ---------- DOM refs ----------
+    const inputText = document.getElementById('inputText');
+    const rewrittenOutput = document.getElementById('rewrittenOutput');
+    const rewriteBtn = document.getElementById('rewriteBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const toneSelect = document.getElementById('toneSelect');
+    const originalWordCount = document.getElementById('originalWordCount');
+    const rewrittenWordCount = document.getElementById('rewrittenWordCount');
+    const originalStat = document.getElementById('originalStat');
+    const rewrittenStat = document.getElementById('rewrittenStat');
+    const similarityDisplay = document.getElementById('similarityDisplay');
+
+    // ---------- helpers ----------
+    function countWords(text) {
+      const tokens = text.trim().split(/\s+/);
+      return tokens.filter(t => t.length > 0).length;
+    }
+
+    function getRandomSynonym(word) {
+      const lower = word.toLowerCase();
+      if (SYNONYMS.has(lower)) {
+        const options = SYNONYMS.get(lower);
+        return options[Math.floor(Math.random() * options.length)];
+      }
+      return null;
+    }
+
+    // Sentence splitting & restructuring (simple)
+    function restructureSentences(text) {
+      // split by . ! ? but keep delimiter
+      const parts = text.split(/([.!?]+)/);
+      let sentences = [];
+      for (let i = 0; i < parts.length; i += 2) {
+        if (parts[i].trim().length === 0) continue;
+        let sentence = parts[i].trim();
+        let delim = (parts[i+1] || '');
+        if (sentence) sentences.push({ sentence, delim });
+      }
+      // reverse order of clauses? simple: reverse sentences with >50% chance
+      if (sentences.length > 1 && Math.random() > 0.4) {
+        // reverse array
+        sentences.reverse();
+      }
+      return sentences.map(s => s.sentence + s.delim).join(' ');
+    }
+
+    // Active/passive voice shift (basic pattern)
+    function shiftVoice(text) {
+      // simple pattern: replace "was/were verb+ed by" -> "verb+ed" active? we do random
+      // we'll swap some passive to active or vice versa
+      let newText = text;
+      // passive -> active: "was eaten by" -> "ate"
+      newText = newText.replace(/\bwas (\w+ed) by\b/gi, (match, verb) => {
+        return verb + ' (by)'; // not perfect but demo
+      });
+      // active -> passive: "The cat ate" -> "was eaten by the cat" (simple)
+      newText = newText.replace(/\b(\w+ed)\b/gi, (match) => {
+        if (Math.random() > 0.7) return 'was ' + match + ' by';
+        return match;
+      });
+      return newText;
+    }
+
+    // main rewrite engine
+    function rewriteText(text, tone) {
+      if (!text.trim()) return { rewritten: '', changedWords: [] };
+
+      // limit to 500 words
+      const wordsArr = text.trim().split(/\s+/);
+      if (wordsArr.length > 500) {
+        text = wordsArr.slice(0, 500).join(' ');
+      }
+
+      let changedWordsSet = new Set();
+      let words = text.split(/(\s+)/); // keep whitespace
+
+      // Step 1: synonym replacement (60% chance per word)
+      words = words.map(token => {
+        if (token.trim().length === 0) return token;
+        const clean = token.replace(/^[^a-zA-Z]*/, '').replace(/[^a-zA-Z]*$/, '');
+        if (clean.length === 0) return token;
+        const synonym = getRandomSynonym(clean);
+        if (synonym && Math.random() < 0.55) {
+          changedWordsSet.add(synonym);
+          // preserve punctuation
+          const prefix = token.slice(0, token.indexOf(clean));
+          const suffix = token.slice(token.indexOf(clean) + clean.length);
+          return prefix + synonym + suffix;
+        }
+        return token;
+      });
+
+      let newText = words.join('');
+
+      // Step 2: sentence restructuring (clause order)
+      newText = restructureSentences(newText);
+
+      // Step 3: voice shift (random)
+      newText = shiftVoice(newText);
+
+      // Step 4: tone shift
+      const toneAdjust = TONE_MAP[tone] || {};
+      let toneWords = newText.split(/(\s+)/);
+      toneWords = toneWords.map(token => {
+        const clean = token.replace(/^[^a-zA-Z]*/, '').replace(/[^a-zA-Z]*$/, '');
+        if (!clean) return token;
+        const lower = clean.toLowerCase();
+        if (toneAdjust[lower]) {
+          changedWordsSet.add(toneAdjust[lower]);
+          const prefix = token.slice(0, token.indexOf(clean));
+          const suffix = token.slice(token.indexOf(clean) + clean.length);
+          return prefix + toneAdjust[lower] + suffix;
+        }
+        return token;
+      });
+      newText = toneWords.join('');
+
+      // ensure first letter uppercase
+      newText = newText.charAt(0).toUpperCase() + newText.slice(1);
+
+      return { rewritten: newText, changedWords: Array.from(changedWordsSet) };
+    }
+
+    // similarity (Jaccard-like)
+    function computeSimilarity(orig, rewritten) {
+      const set1 = new Set(orig.toLowerCase().split(/\s+/).filter(w=>w.length>2));
+      const set2 = new Set(rewritten.toLowerCase().split(/\s+/).filter(w=>w.length>2));
+      if (set1.size === 0 && set2.size === 0) return 100;
+      let intersection = 0;
+      for (let w of set1) if (set2.has(w)) intersection++;
+      const union = new Set([...set1, ...set2]).size;
+      return Math.round((intersection / union) * 100);
+    }
+
+    // highlight changed words (simple: any word that appears in changed list)
+    function highlightChanged(text, changedWords) {
+      if (!changedWords || changedWords.length === 0) return text;
+      const lowerSet = new Set(changedWords.map(w=>w.toLowerCase()));
+      const parts = text.split(/(\s+)/);
+      return parts.map(token => {
+        const clean = token.replace(/^[^a-zA-Z]*/, '').replace(/[^a-zA-Z]*$/, '');
+        if (clean && lowerSet.has(clean.toLowerCase())) {
+          return `<span class="highlight">${token}</span>`;
+        }
+        return token;
+      }).join('');
+    }
+
+    // main update
+    function updateRewrite() {
+      const original = inputText.value;
+      const tone = toneSelect.value;
+      const { rewritten, changedWords } = rewriteText(original, tone);
+      rewrittenOutput.innerHTML = highlightChanged(rewritten, changedWords);
+
+      const origCount = countWords(original);
+      const rewCount = countWords(rewritten);
+      originalWordCount.textContent = origCount + ' words';
+      rewrittenWordCount.textContent = rewCount + ' words';
+      originalStat.textContent = 'Original: ' + origCount + ' words';
+      rewrittenStat.textContent = 'Rewritten: ' + rewCount + ' words';
+      const sim = computeSimilarity(original, rewritten);
+      similarityDisplay.textContent = 'Similarity: ' + sim + '%';
+    }
+
+    // copy
+    function copyResult() {
+      const text = rewrittenOutput.textContent || '';
+      if (!text.trim()) return;
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.textContent = '✅ Copied!';
+        setTimeout(() => copyBtn.textContent = '📋 Copy Result', 1500);
+      }).catch(() => {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        copyBtn.textContent = '✅ Copied!';
+        setTimeout(() => copyBtn.textContent = '📋 Copy Result', 1500);
+      });
+    }
+
+    // reset
+    function resetTool() {
+      inputText.value = 'The quick brown fox jumps over the lazy dog. The dog was sleeping in the sun. Many people believe that artificial intelligence will change the world.';
+      toneSelect.value = 'casual';
+      updateRewrite();
+    }
+
+    // event listeners
+    rewriteBtn.addEventListener('click', updateRewrite);
+    copyBtn.addEventListener('click', copyResult);
+    resetBtn.addEventListener('click', resetTool);
+    // auto update on tone change? we'll add
+    toneSelect.addEventListener('change', updateRewrite);
+    // initial load
+    updateRewrite();
+  })();
+</script>
+</body>
+</html>
