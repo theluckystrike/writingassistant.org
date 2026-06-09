@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passive Voice Converter — Active Voice Suggestions</title>
+  <meta name="description" content="Detect passive voice sentences and convert them to active voice. Improve writing clarity with passive-to-active conversion suggestions and ratio analysis.">
+  <link rel="canonical" href="https://writingassistant.org/tools/passive-voice-converter">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2241192243363112" crossorigin="anonymous"></script>
+  <!-- Structured data: WebApplication, FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Passive Voice Converter",
+    "url": "https://writingassistant.org/tools/passive-voice-converter",
+    "description": "Detect and convert passive voice to active voice. Shows passive/active ratio with improvement suggestions.",
+    "applicationCategory": "Writing",
+    "operatingSystem": "All"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://writingassistant.org/" },
+      { "@type": "ListItem", "position": 2, "name": "Passive Voice Converter", "item": "https://writingassistant.org/tools/passive-voice-converter" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "What is passive voice?", "acceptedAnswer": { "@type": "Answer", "text": "Passive voice is when the subject receives the action instead of performing it. Example: 'The cake was eaten by Sarah' (passive) vs 'Sarah ate the cake' (active)." } },
+      { "@type": "Question", "name": "When is passive voice appropriate?", "acceptedAnswer": { "@type": "Answer", "text": "Passive voice is sometimes useful when the action is more important than the actor, or when the actor is unknown. Generally, active voice is preferred for clarity." } }
+    ]
+  }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      padding: 1.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-weight: 500;
+      font-size: 1.9rem;
+      letter-spacing: -0.02em;
+      color: #f0f0f0;
+    }
+    h1 span { color: #8b5cf6; }
+    .subhead { color: #aaa; font-size: 0.95rem; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 800px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    textarea {
+      width: 100%;
+      min-height: 320px;
+      background: #141414;
+      border: 1px solid #2e2e2e;
+      border-radius: 12px;
+      color: #e0e0e0;
+      padding: 1.2rem;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: border 0.2s;
+    }
+    textarea:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139,92,246,0.2); }
+    .stats-panel {
+      background: #111;
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid #222;
+    }
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.8rem;
+      margin-bottom: 1.2rem;
+      background: #181818;
+      padding: 0.8rem 1rem;
+      border-radius: 40px;
+    }
+    .stat-item {
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+    }
+    .stat-item .label { color: #999; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .stat-item .value { color: #e0e0e0; font-weight: 500; }
+    .ratio-bar {
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 1rem 0;
+      border: 1px solid #2a2a2a;
+    }
+    .ratio-label { font-size: 0.85rem; color: #aaa; margin-bottom: 0.5rem; }
+    .ratio-visual {
+      display: flex;
+      height: 24px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #0a0a0a;
+    }
+    .ratio-active { background: #8bc34a; }
+    .ratio-passive { background: #f7a84f; }
+    .ratio-text { font-size: 0.8rem; color: #ccc; margin-top: 0.4rem; }
+    .passive-section {
+      margin-top: 1.5rem;
+      background: #111;
+      border-radius: 16px;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid #222;
+    }
+    .section-title { font-size: 0.9rem; color: #aaa; margin-bottom: 0.8rem; }
+    .conversion-list { display: flex; flex-direction: column; gap: 0.8rem; }
+    .conversion-item {
+      background: #1a1a1a;
+      border-left: 3px solid #f7a84f;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+    }
+    .conversion-original { color: #f7a84f; font-size: 0.8rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 0.3rem; }
+    .conversion-text { color: #e0e0e0; margin-bottom: 0.5rem; font-style: italic; }
+    .conversion-suggested { color: #8bc34a; font-size: 0.85rem; margin-top: 0.4rem; }
+    .conversion-suggested strong { color: #8bc34a; }
+    .no-passive { color: #8bc34a; font-style: italic; }
+    footer {
+      margin-top: 3rem;
+      border-top: 1px solid #222;
+      padding-top: 1.2rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.85rem;
+    }
+    footer a { color: #8b5cf6; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .note { color: #777; font-size: 0.8rem; margin-top: 0.5rem; }
+    .score-badge {
+      display: inline-block;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      padding: 0.5rem 0.8rem;
+      border-radius: 20px;
+      font-weight: 600;
+      color: #8b5cf6;
+      margin: 0.5rem 0;
+    }
+  </style>
+
+  <meta property="og:title" content="Passive Voice Converter — Active Voice Suggestions">
+  <meta property="og:description" content="Detect passive voice sentences and convert them to active voice. Improve writing clarity with passive-to-active conversion suggestions.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://writingassistant.org/tools/passive-voice-converter">
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1><span>passive voice</span> converter</h1>
+      <div class="subhead">Detect · Convert · Improve Clarity</div>
+    </div>
+    <div style="color:#777; font-size:0.85rem;">⚡ real‑time analysis</div>
+  </header>
+
+  <div class="grid-2">
+    <div>
+      <textarea id="textInput" placeholder="Paste or type your text here...">The report was written by the team. Sarah completed the project ahead of schedule. The decision was made by the committee without consulting stakeholders. We approved the budget proposal. The presentation was given by John in the conference room. The cake was eaten quickly by the children. The software is being updated by the developers. Our company was founded in 1995.</textarea>
+    </div>
+    <div class="stats-panel" id="statsPanel">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- passive voice conversions -->
+  <div class="passive-section" id="conversionSection">
+    <div class="section-title">🔍 Passive Voice Detected</div>
+    <div id="conversionContainer" class="conversion-list"></div>
+    <div class="note">Note: Suggestions assume clear actors. Review context before applying changes.</div>
+  </div>
+
+  <footer>
+    <a href="https://writingassistant.org/">writingassistant.org</a> — © 2026 writingassistant.org — Writing Tools
+  </footer>
+</div>
+
+<script>
+  (function() {
+    const textarea = document.getElementById('textInput');
+    const statsPanel = document.getElementById('statsPanel');
+    const conversionContainer = document.getElementById('conversionContainer');
+
+    // Common passive voice patterns: "was/were + past participle" or "is/are being + past participle"
+    const passivePattern = /\b(is|are|was|were|be|being|been)\s+(?:being\s+)?([a-z]+ed|taken|given|made|seen|known|found|written|done|placed|set|sold|bought|sent|shown|told|brought|chosen|meant|put|read|understood|suggested|considered|believed|expected|kept|left|paid|appeared|received|heard|called|included|involved|required|involved|offered|allowed|provided|supplied|promised|arranged|ordered|asked|forced|persuaded|encouraged|enabled|helped|advised|warned|taught|shown|told|informed|reminded|convinced|assured|guaranteed|claimed|alleged|reported|stated|said|mentioned|noted|indicated|suggested|proposed|recommended|submitted|presented|introduced|demonstrated|illustrated|displayed|exhibited|exposed|revealed|showed|projected|screened|broadcast|published|issued|released|distributed|circulated|shared|exchanged|traded|transferred|delivered|shipped|mailed|sent|communicated|transmitted|conveyed|imparted|expressed|voiced|stated|declared|announced|proclaimed|asserted|maintained|insisted|swore|testified|confessed|admitted|acknowledged|granted|conceded|yielded|surrendered|submitted)\b/i;
+
+    function detectPassiveVoice(text) {
+      const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+      const passiveSentences = [];
+
+      sentences.forEach((sent) => {
+        const trimmed = sent.trim();
+        if (passivePattern.test(trimmed)) {
+          // Extract subject and suggested active version
+          const subjectMatch = trimmed.match(/^([a-zA-Z\s]+?)\s+(?:was|were|is|are|being|been|be)/i);
+          const subject = subjectMatch ? subjectMatch[1].trim() : 'Unknown';
+
+          passiveSentences.push({
+            original: trimmed,
+            subject: subject,
+            suggestion: generateActiveSuggestion(trimmed, subject)
+          });
+        }
+      });
+
+      return passiveSentences;
+    }
+
+    function generateActiveSuggestion(sentence, subject) {
+      // Simple heuristic: Look for "by [actor]" pattern
+      const byMatch = sentence.match(/by\s+([a-zA-Z\s]+?)[\.,]/);
+      if (byMatch) {
+        const actor = byMatch[1].trim();
+        // Remove passive structure and restructure with actor as subject
+        const withoutPassive = sentence.replace(/was\s+|were\s+|is\s+|are\s+|being\s+/i, '').replace(/\s+by\s+[a-zA-Z\s]+/i, '');
+        return `"${actor} " + [verb in active form] + " ${subject}". For example: "${actor} ${extractVerb(sentence, actor)}..."`;
+      }
+      return `Consider restructuring with an active agent as the subject instead of "${subject}".`;
+    }
+
+    function extractVerb(sentence, actor) {
+      const verbMatch = sentence.match(/\b(was|were|is|are|being|been|be)\s+(?:being\s+)?([a-z]+ed|taken|given|made|seen|known|found|written|done)\b/i);
+      return verbMatch ? verbMatch[2].replace(/ed$/, 'es') : 'acts';
+    }
+
+    function analyzeVoiceRatio(text) {
+      const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+      const totalSentences = sentences.length;
+      const passiveSentences = sentences.filter(s => passivePattern.test(s)).length;
+      const activeSentences = totalSentences - passiveSentences;
+
+      return {
+        total: totalSentences,
+        passive: passiveSentences,
+        active: activeSentences,
+        passivePercent: totalSentences > 0 ? (passiveSentences / totalSentences) * 100 : 0,
+        activePercent: totalSentences > 0 ? (activeSentences / totalSentences) * 100 : 0
+      };
+    }
+
+    function updateUI() {
+      const text = textarea.value;
+      const passive = detectPassiveVoice(text);
+      const ratio = analyzeVoiceRatio(text);
+
+      // stats panel
+      const recommendation = ratio.passivePercent > 30 ? 'Consider reducing passive voice' : 'Good balance of active and passive voice';
+      let html = `
+        <div class="score-badge">${ratio.passive} passive sentences</div>
+        <div class="stat-row">
+          <div class="stat-item"><span class="label">total sentences</span><span class="value">${ratio.total}</span></div>
+          <div class="stat-item"><span class="label">active</span><span class="value">${ratio.active}</span></div>
+          <div class="stat-item"><span class="label">passive</span><span class="value">${ratio.passive}</span></div>
+        </div>
+        <div class="ratio-bar">
+          <div class="ratio-label">Voice Ratio</div>
+          <div class="ratio-visual">
+            <div class="ratio-active" style="width: ${ratio.activePercent}%;"></div>
+            <div class="ratio-passive" style="width: ${ratio.passivePercent}%;"></div>
+          </div>
+          <div class="ratio-text">${ratio.activePercent.toFixed(1)}% active / ${ratio.passivePercent.toFixed(1)}% passive</div>
+        </div>
+        <div style="color: #aaa; font-size: 0.9rem; margin-top: 1rem;">💡 ${recommendation}</div>
+      `;
+      statsPanel.innerHTML = html;
+
+      // conversions list
+      let conversionHtml = '';
+      if (passive.length === 0) {
+        conversionHtml = '<div class="no-passive">✓ No passive voice constructions detected. Your text uses active voice well!</div>';
+      } else {
+        conversionHtml = passive.map((item, idx) => `
+          <div class="conversion-item">
+            <div class="conversion-original">Passive (Sentence ${idx + 1})</div>
+            <div class="conversion-text">"${escapeHtml(item.original)}"</div>
+            <div class="conversion-suggested">✓ Suggested active version: ${escapeHtml(item.suggestion)}</div>
+          </div>
+        `).join('');
+      }
+      conversionContainer.innerHTML = conversionHtml;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // initial render
+    updateUI();
+    textarea.addEventListener('input', updateUI);
+  })();
+</script>
+</body>
+</html>

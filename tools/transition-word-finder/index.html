@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transition Word Finder — Improve Writing Flow</title>
+  <meta name="description" content="Find and suggest transition words for better writing flow. Analyzes transition frequency and detects missing transitions between paragraphs.">
+  <link rel="canonical" href="https://writingassistant.org/tools/transition-word-finder">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2241192243363112" crossorigin="anonymous"></script>
+  <!-- Structured data: WebApplication, FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Transition Word Finder",
+    "url": "https://writingassistant.org/tools/transition-word-finder",
+    "description": "Find and suggest transition words. Analyzes transition frequency, detects missing transitions, suggests appropriate transitions by type.",
+    "applicationCategory": "Writing",
+    "operatingSystem": "All"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://writingassistant.org/" },
+      { "@type": "ListItem", "position": 2, "name": "Transition Word Finder", "item": "https://writingassistant.org/tools/transition-word-finder" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "What are transition words?", "acceptedAnswer": { "@type": "Answer", "text": "Transition words are words or phrases that connect ideas and improve the flow between sentences and paragraphs." } },
+      { "@type": "Question", "name": "Why are transition words important?", "acceptedAnswer": { "@type": "Answer", "text": "They help readers understand the relationships between ideas and make your writing more coherent and easier to follow." } }
+    ]
+  }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      padding: 1.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-weight: 500;
+      font-size: 1.9rem;
+      letter-spacing: -0.02em;
+      color: #f0f0f0;
+    }
+    h1 span { color: #8b5cf6; }
+    .subhead { color: #aaa; font-size: 0.95rem; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 800px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    textarea {
+      width: 100%;
+      min-height: 320px;
+      background: #141414;
+      border: 1px solid #2e2e2e;
+      border-radius: 12px;
+      color: #e0e0e0;
+      padding: 1.2rem;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: border 0.2s;
+    }
+    textarea:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139,92,246,0.2); }
+    .stats-panel {
+      background: #111;
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid #222;
+    }
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.8rem;
+      margin-bottom: 1.2rem;
+      background: #181818;
+      padding: 0.8rem 1rem;
+      border-radius: 40px;
+    }
+    .stat-item {
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+    }
+    .stat-item .label { color: #999; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .stat-item .value { color: #e0e0e0; font-weight: 500; }
+    .transition-section {
+      margin-top: 1.5rem;
+      background: #111;
+      border-radius: 16px;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid #222;
+    }
+    .section-title { font-size: 0.9rem; color: #aaa; margin-bottom: 1rem; }
+    .transition-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .transition-card {
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 1rem;
+      border: 1px solid #2a2a2a;
+    }
+    .card-type { font-size: 0.75rem; color: #8b5cf6; text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; }
+    .card-title { font-size: 1rem; color: #e0e0e0; margin: 0.4rem 0 0.6rem; font-weight: 500; }
+    .card-words { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .word-tag {
+      background: #0a0a0a;
+      border: 1px solid #333;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: #ccc;
+    }
+    .word-tag.highlighted { border-color: #8b5cf6; color: #8b5cf6; }
+    .paragraph-analysis {
+      margin-top: 1.5rem;
+    }
+    .para-item {
+      background: #1a1a1a;
+      border-left: 3px solid #8b5cf6;
+      padding: 0.8rem 1rem;
+      margin-bottom: 0.6rem;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+    }
+    .para-label { font-size: 0.8rem; color: #888; margin-bottom: 0.3rem; }
+    .para-text { color: #d0d0d0; font-size: 0.95rem; margin-bottom: 0.3rem; }
+    .para-suggestion { font-size: 0.8rem; color: #8b5cf6; margin-top: 0.3rem; }
+    footer {
+      margin-top: 3rem;
+      border-top: 1px solid #222;
+      padding-top: 1.2rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.85rem;
+    }
+    footer a { color: #8b5cf6; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .note { color: #777; font-size: 0.8rem; margin-top: 0.5rem; }
+    .score-badge {
+      display: inline-block;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      padding: 0.5rem 0.8rem;
+      border-radius: 20px;
+      font-weight: 600;
+      color: #8b5cf6;
+      margin: 0.5rem 0;
+    }
+  </style>
+
+  <meta property="og:title" content="Transition Word Finder — Improve Writing Flow">
+  <meta property="og:description" content="Find and suggest transition words for better writing flow. Analyzes transition frequency and detects missing transitions between paragraphs.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://writingassistant.org/tools/transition-word-finder">
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1><span>transition</span> word finder</h1>
+      <div class="subhead">Addition · Contrast · Cause · Sequence · Summary</div>
+    </div>
+    <div style="color:#777; font-size:0.85rem;">⚡ real‑time analysis</div>
+  </header>
+
+  <div class="grid-2">
+    <div>
+      <textarea id="textInput" placeholder="Paste or type your text here...">Writing is an important skill. It helps us communicate our ideas clearly. We use different techniques to improve our writing. One technique is using transition words. They connect ideas together. For instance, transition words show relationships between sentences. Similarly, they improve readability. In conclusion, writers should use transitions to enhance their work.</textarea>
+    </div>
+    <div class="stats-panel" id="statsPanel">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- transitions by type -->
+  <div class="transition-section" id="transitionSection">
+    <div class="section-title">🔍 Transitions Used in Your Text</div>
+    <div class="transition-grid" id="transitionGrid"></div>
+  </div>
+
+  <!-- paragraph analysis -->
+  <div class="transition-section paragraph-analysis" id="paragraphSection">
+    <div class="section-title">📄 Paragraph-by-Paragraph Analysis</div>
+    <div id="paragraphContainer"></div>
+    <div class="note">Paragraphs with few or no transitions may benefit from smoother connections.</div>
+  </div>
+
+  <footer>
+    <a href="https://writingassistant.org/">writingassistant.org</a> — © 2026 writingassistant.org — Writing Tools
+  </footer>
+</div>
+
+<script>
+  (function() {
+    const textarea = document.getElementById('textInput');
+    const statsPanel = document.getElementById('statsPanel');
+    const transitionGrid = document.getElementById('transitionGrid');
+    const paragraphContainer = document.getElementById('paragraphContainer');
+
+    const transitionCategories = {
+      addition: ['also', 'additionally', 'furthermore', 'moreover', 'in addition', 'besides', 'as well as', 'plus', 'and'],
+      contrast: ['however', 'but', 'yet', 'on the other hand', 'in contrast', 'conversely', 'although', 'though', 'meanwhile'],
+      cause: ['because', 'since', 'as', 'caused by', 'due to', 'for this reason', 'as a result', 'consequently', 'therefore', 'thus'],
+      sequence: ['first', 'second', 'third', 'next', 'then', 'after', 'before', 'finally', 'meanwhile', 'subsequently', 'eventually'],
+      summary: ['in conclusion', 'in summary', 'ultimately', 'to sum up', 'in short', 'overall', 'in general', 'essentially', 'finally']
+    };
+
+    function findTransitions(text) {
+      const found = {};
+      for (const [category, words] of Object.entries(transitionCategories)) {
+        found[category] = [];
+        words.forEach(word => {
+          const regex = new RegExp(`\\b${word}\\b`, 'gi');
+          let match;
+          while ((match = regex.exec(text)) !== null) {
+            found[category].push(word.toLowerCase());
+          }
+        });
+        found[category] = [...new Set(found[category])];
+      }
+      return found;
+    }
+
+    function analyzeParagraphs(text) {
+      const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+      return paragraphs.map((para, idx) => {
+        const words = para.toLowerCase().match(/\b\w+\b/g) || [];
+        const foundTransitions = [];
+        for (const category of Object.keys(transitionCategories)) {
+          transitionCategories[category].forEach(trans => {
+            if (words.includes(trans.split(' ')[0])) {
+              foundTransitions.push(trans);
+            }
+          });
+        }
+        return {
+          index: idx + 1,
+          text: para.slice(0, 80) + (para.length > 80 ? '...' : ''),
+          transitions: foundTransitions,
+          hasTransition: foundTransitions.length > 0
+        };
+      });
+    }
+
+    function getSuggestions(paraAnalysis) {
+      const suggestions = [];
+      paraAnalysis.forEach((para, idx) => {
+        if (!para.hasTransition && idx > 0) {
+          suggestions.push({
+            paraNum: para.index,
+            suggestion: `Consider adding a transition word like: ${transitionCategories.addition[0]}, ${transitionCategories.contrast[0]}, or ${transitionCategories.sequence[0]}`
+          });
+        }
+      });
+      return suggestions;
+    }
+
+    function updateUI() {
+      const text = textarea.value;
+      const transitions = findTransitions(text);
+      const paraAnalysis = analyzeParagraphs(text);
+      const suggestions = getSuggestions(paraAnalysis);
+
+      // count total transitions
+      let totalTransitions = 0;
+      for (const cat in transitions) {
+        totalTransitions += transitions[cat].length;
+      }
+
+      // stats panel
+      let html = `
+        <div class="score-badge">Total transitions: ${totalTransitions}</div>
+        <div class="stat-row">
+          <div class="stat-item"><span class="label">paragraphs</span><span class="value">${paraAnalysis.length}</span></div>
+          <div class="stat-item"><span class="label">w/ transitions</span><span class="value">${paraAnalysis.filter(p => p.hasTransition).length}</span></div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-item"><span class="label">addition</span><span class="value">${transitions.addition.length}</span></div>
+          <div class="stat-item"><span class="label">contrast</span><span class="value">${transitions.contrast.length}</span></div>
+          <div class="stat-item"><span class="label">cause</span><span class="value">${transitions.cause.length}</span></div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-item"><span class="label">sequence</span><span class="value">${transitions.sequence.length}</span></div>
+          <div class="stat-item"><span class="label">summary</span><span class="value">${transitions.summary.length}</span></div>
+        </div>
+      `;
+      statsPanel.innerHTML = html;
+
+      // transition cards
+      let cardsHtml = '';
+      for (const [category, words] of Object.entries(transitionCategories)) {
+        const found = transitions[category];
+        const isHighlighted = found.length > 0;
+        cardsHtml += `
+          <div class="transition-card">
+            <div class="card-type">${category}</div>
+            <div class="card-title">${found.length} found</div>
+            <div class="card-words">
+        `;
+        transitionCategories[category].forEach(word => {
+          const highlighted = found.includes(word.toLowerCase());
+          cardsHtml += `<div class="word-tag ${highlighted ? 'highlighted' : ''}">${word}</div>`;
+        });
+        cardsHtml += '</div></div>';
+      }
+      transitionGrid.innerHTML = cardsHtml;
+
+      // paragraph analysis
+      let paraHtml = '';
+      paraAnalysis.forEach((para) => {
+        const status = para.hasTransition ? '✓ Has transition' : '⚠ Missing transition';
+        const statusColor = para.hasTransition ? '#8bc34a' : '#f7a84f';
+        paraHtml += `
+          <div class="para-item">
+            <div class="para-label">Paragraph ${para.index}</div>
+            <div class="para-text">"${escapeHtml(para.text)}"</div>
+            <div class="para-suggestion" style="color:${statusColor};">${status}</div>
+        `;
+        if (para.transitions.length > 0) {
+          paraHtml += `<div class="para-suggestion">Found: <strong>${para.transitions.join(', ')}</strong></div>`;
+        }
+        paraHtml += '</div>';
+      });
+      paragraphContainer.innerHTML = paraHtml;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // initial render
+    updateUI();
+    textarea.addEventListener('input', updateUI);
+  })();
+</script>
+</body>
+</html>

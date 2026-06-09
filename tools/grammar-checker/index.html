@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grammar Checker — Real-time Writing Analysis</title>
+  <meta name="description" content="Free grammar checker: detects subject-verb agreement errors, double negatives, run-on sentences, fragments, and commonly confused words...">
+  <link rel="canonical" href="https://writingassistant.org/tools/grammar-checker">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2241192243363112" crossorigin="anonymous"></script>
+  <!-- Structured data: WebApplication, FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Grammar Checker",
+    "url": "https://writingassistant.org/tools/grammar-checker",
+    "description": "Real-time grammar checking: subject-verb agreement, double negatives, run-on sentences, fragments, commonly confused words.",
+    "applicationCategory": "Writing",
+    "operatingSystem": "All"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://writingassistant.org/" },
+      { "@type": "ListItem", "position": 2, "name": "Grammar Checker", "item": "https://writingassistant.org/tools/grammar-checker" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "What does subject-verb agreement mean?", "acceptedAnswer": { "@type": "Answer", "text": "The subject and verb in a sentence must match in number. Singular subjects need singular verbs, plural subjects need plural verbs." } },
+      { "@type": "Question", "name": "What is a run-on sentence?", "acceptedAnswer": { "@type": "Answer", "text": "A run-on sentence joins two independent clauses without proper punctuation or conjunctions." } }
+    ]
+  }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      padding: 1.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-weight: 500;
+      font-size: 1.9rem;
+      letter-spacing: -0.02em;
+      color: #f0f0f0;
+    }
+    h1 span { color: #8b5cf6; }
+    .subhead { color: #aaa; font-size: 0.95rem; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 800px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    textarea {
+      width: 100%;
+      min-height: 320px;
+      background: #141414;
+      border: 1px solid #2e2e2e;
+      border-radius: 12px;
+      color: #e0e0e0;
+      padding: 1.2rem;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: border 0.2s;
+    }
+    textarea:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139,92,246,0.2); }
+    .stats-panel {
+      background: #111;
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid #222;
+    }
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.8rem;
+      margin-bottom: 1.2rem;
+      background: #181818;
+      padding: 0.8rem 1rem;
+      border-radius: 40px;
+    }
+    .stat-item {
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+    }
+    .stat-item .label { color: #999; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .stat-item .value { color: #e0e0e0; font-weight: 500; }
+    .issue-section {
+      margin-top: 1.5rem;
+      background: #111;
+      border-radius: 16px;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid #222;
+    }
+    .issue-title { font-size: 0.9rem; color: #aaa; margin-bottom: 0.8rem; }
+    .issue-list { display: flex; flex-direction: column; gap: 0.8rem; }
+    .issue-item {
+      background: #1a1a1a;
+      border-left: 3px solid #8b5cf6;
+      padding: 0.9rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+    }
+    .issue-type { font-size: 0.8rem; color: #8b5cf6; text-transform: uppercase; font-weight: 600; letter-spacing: 0.02em; }
+    .issue-text { color: #e0e0e0; margin: 0.3rem 0; }
+    .issue-suggestion { font-size: 0.85rem; color: #aaa; margin-top: 0.4rem; }
+    .issue-suggestion strong { color: #8bc34a; }
+    .no-issues { color: #666; font-style: italic; }
+    footer {
+      margin-top: 3rem;
+      border-top: 1px solid #222;
+      padding-top: 1.2rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.85rem;
+    }
+    footer a { color: #8b5cf6; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .note { color: #777; font-size: 0.8rem; margin-top: 0.5rem; }
+    .score-badge {
+      display: inline-block;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      padding: 0.5rem 0.8rem;
+      border-radius: 20px;
+      font-weight: 600;
+      color: #8bc34a;
+      margin: 0.5rem 0;
+    }
+    .score-badge.warn { color: #f7a84f; }
+    .score-badge.error { color: #f75f5f; }
+  </style>
+
+  <meta property="og:title" content="Grammar Checker — Real-time Writing Analysis">
+  <meta property="og:description" content="Free grammar checker: detects subject-verb agreement errors, double negatives, run-on sentences, fragments, and commonly confused words.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://writingassistant.org/tools/grammar-checker">
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1><span>grammar</span> checker</h1>
+      <div class="subhead">Subject-verb · Double negatives · Run-on · Fragments · Confused words</div>
+    </div>
+    <div style="color:#777; font-size:0.85rem;">⚡ real‑time analysis</div>
+  </header>
+
+  <div class="grid-2">
+    <div>
+      <textarea id="textInput" placeholder="Paste or type your text here...">The team are working on the project. She don't know nothing about the grammar rules. The cat and dog is sleeping on the couch. Run on sentences combines two independent clauses without proper punctuation or conjunctions connecting them together. Its important to check you're writing for grammatical errors. The students was studying. Fragment. Another fragment here.</textarea>
+    </div>
+    <div class="stats-panel" id="statsPanel">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- issues section -->
+  <div class="issue-section" id="issueSection">
+    <div class="issue-title">🔍 Grammar Issues Found</div>
+    <div id="issueContainer" class="issue-list"></div>
+    <div class="note">Click on an issue to understand the correction.</div>
+  </div>
+
+  <footer>
+    <a href="https://writingassistant.org/">writingassistant.org</a> — © 2026 writingassistant.org — Writing Tools
+  </footer>
+</div>
+
+<script>
+  (function() {
+    const textarea = document.getElementById('textInput');
+    const statsPanel = document.getElementById('statsPanel');
+    const issueContainer = document.getElementById('issueContainer');
+
+    const commonlyConfusedWords = {
+      'their': ['there', 'they\'re'],
+      'there': ['their', 'they\'re'],
+      'they\'re': ['their', 'there'],
+      'its': ['it\'s'],
+      'it\'s': ['its'],
+      'your': ['you\'re'],
+      'you\'re': ['your'],
+      'whose': ['who\'s'],
+      'who\'s': ['whose'],
+      'affect': ['effect'],
+      'effect': ['affect'],
+      'accept': ['except'],
+      'except': ['accept']
+    };
+
+    // Simple subject-verb agreement check
+    const singularVerbs = ['is', 'has', 'does', 'was', 'were', 'gets', 'goes', 'comes', 'makes', 'takes'];
+    const pluralVerbs = ['are', 'have', 'do', 'were', 'get', 'go', 'come', 'make', 'take'];
+    const singularSubjects = ['he', 'she', 'it', 'this', 'that'];
+    const pluralSubjects = ['they', 'we', 'you', 'these', 'those', 'them'];
+
+    function detectGrammarIssues(text) {
+      const issues = [];
+      const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+      const words = text.toLowerCase().match(/\b[\w']+\b/g) || [];
+
+      // 1. Check for double negatives
+      const doubleNegPatterns = /\b(don't|doesn't|didn't|won't|wouldn't|can't|couldn't|shouldn't|mustn't|hasn't|haven't|hadn't)\s+.*\b(nothing|nobody|none|no\s+\w+|never|nowhere)\b/i;
+      sentences.forEach((sent, idx) => {
+        if (doubleNegPatterns.test(sent)) {
+          issues.push({
+            type: 'Double Negative',
+            text: sent.trim(),
+            suggestion: 'Rewrite to avoid double negatives: use either a negative word or a negative verb, not both. Example: "She doesn\'t know anything" instead of "doesn\'t know nothing".'
+          });
+        }
+      });
+
+      // 2. Check for run-on sentences (very long without proper punctuation)
+      sentences.forEach((sent) => {
+        const wordCount = (sent.match(/\b\w+\b/g) || []).length;
+        if (wordCount > 30 && !sent.includes(',') && !sent.includes(';')) {
+          issues.push({
+            type: 'Run-on Sentence',
+            text: sent.trim(),
+            suggestion: 'This sentence is very long. Consider breaking it into multiple sentences or adding commas/semicolons: "Sentence 1. Sentence 2." or "Clause 1, and clause 2."'
+          });
+        }
+      });
+
+      // 3. Check for sentence fragments
+      sentences.forEach((sent) => {
+        const trimmed = sent.trim();
+        const hasVerb = /\b(is|are|was|were|be|being|been|has|have|had|do|does|did|can|could|will|would|shall|should|may|might|must|am)\b/i.test(trimmed);
+        const words_in_sent = trimmed.split(/\s+/);
+        if (!hasVerb && words_in_sent.length > 0 && words_in_sent.length < 4 && trimmed.length < 30) {
+          issues.push({
+            type: 'Sentence Fragment',
+            text: trimmed,
+            suggestion: 'This appears to be a sentence fragment. Add a subject and verb, or combine it with the previous sentence.'
+          });
+        }
+      });
+
+      // 4. Subject-verb agreement
+      sentences.forEach((sent) => {
+        const words_arr = sent.toLowerCase().match(/\b\w+\b/g) || [];
+        for (let i = 0; i < words_arr.length - 1; i++) {
+          const word = words_arr[i];
+          const next = words_arr[i + 1];
+          if (singularSubjects.includes(word) && pluralVerbs.includes(next)) {
+            issues.push({
+              type: 'Subject-Verb Agreement',
+              text: sent.trim(),
+              suggestion: `"${word}" is singular. Use a singular verb. Change "${next}" to the singular form.`
+            });
+            break;
+          }
+          if (pluralSubjects.includes(word) && singularVerbs.includes(next)) {
+            issues.push({
+              type: 'Subject-Verb Agreement',
+              text: sent.trim(),
+              suggestion: `"${word}" is plural. Use a plural verb. Change "${next}" to the plural form.`
+            });
+            break;
+          }
+        }
+      });
+
+      // 5. Commonly confused words
+      for (const [confused, alternatives] of Object.entries(commonlyConfusedWords)) {
+        const regex = new RegExp(`\\b${confused}\\b`, 'gi');
+        if (regex.test(text)) {
+          issues.push({
+            type: 'Commonly Confused Words',
+            text: `Word "${confused}" detected.`,
+            suggestion: `Did you mean: <strong>${alternatives.join(', ')}</strong>? Check if the correct word is used in context.`
+          });
+        }
+      }
+
+      return issues;
+    }
+
+    function countIssues(text) {
+      const issues = detectGrammarIssues(text);
+      const counts = {
+        total: issues.length,
+        doubleNegatives: 0,
+        runOn: 0,
+        fragments: 0,
+        subjectVerb: 0,
+        confusedWords: 0
+      };
+      issues.forEach(issue => {
+        if (issue.type === 'Double Negative') counts.doubleNegatives++;
+        else if (issue.type === 'Run-on Sentence') counts.runOn++;
+        else if (issue.type === 'Sentence Fragment') counts.fragments++;
+        else if (issue.type === 'Subject-Verb Agreement') counts.subjectVerb++;
+        else if (issue.type === 'Commonly Confused Words') counts.confusedWords++;
+      });
+      return counts;
+    }
+
+    function updateUI() {
+      const text = textarea.value;
+      const issues = detectGrammarIssues(text);
+      const counts = countIssues(text);
+
+      // stats panel
+      const statusBadge = counts.total === 0
+        ? '<div class="score-badge">✓ No issues found</div>'
+        : `<div class="score-badge error">${counts.total} issue${counts.total !== 1 ? 's' : ''} found</div>`;
+
+      let html = `
+        <div>${statusBadge}</div>
+        <div class="stat-row">
+          <div class="stat-item"><span class="label">total issues</span><span class="value">${counts.total}</span></div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-item"><span class="label">double neg.</span><span class="value">${counts.doubleNegatives}</span></div>
+          <div class="stat-item"><span class="label">run-on</span><span class="value">${counts.runOn}</span></div>
+          <div class="stat-item"><span class="label">fragments</span><span class="value">${counts.fragments}</span></div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-item"><span class="label">subj-verb</span><span class="value">${counts.subjectVerb}</span></div>
+          <div class="stat-item"><span class="label">confused words</span><span class="value">${counts.confusedWords}</span></div>
+        </div>
+      `;
+      statsPanel.innerHTML = html;
+
+      // issues list
+      let issuesHtml = '';
+      if (issues.length === 0) {
+        issuesHtml = '<div class="no-issues">✓ No grammar issues detected in your text.</div>';
+      } else {
+        issuesHtml = issues.map((issue, idx) => `
+          <div class="issue-item">
+            <div class="issue-type">${issue.type}</div>
+            <div class="issue-text">${escapeHtml(issue.text)}</div>
+            <div class="issue-suggestion">💡 ${issue.suggestion}</div>
+          </div>
+        `).join('');
+      }
+      issueContainer.innerHTML = issuesHtml;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // initial render
+    updateUI();
+    textarea.addEventListener('input', updateUI);
+  })();
+</script>
+</body>
+</html>

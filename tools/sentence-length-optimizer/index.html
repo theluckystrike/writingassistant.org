@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentence Length Optimizer — Improve Readability</title>
+  <meta name="description" content="Analyze and optimize sentence length variety. View sentence length distribution, variance score, and readability impact. Identify too-long and...">
+  <link rel="canonical" href="https://writingassistant.org/tools/sentence-length-optimizer">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2241192243363112" crossorigin="anonymous"></script>
+  <!-- Structured data: WebApplication, FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Sentence Length Optimizer",
+    "url": "https://writingassistant.org/tools/sentence-length-optimizer",
+    "description": "Optimize sentence length variety. Shows sentence length histogram, variance score, readability impact, and highlights issues.",
+    "applicationCategory": "Writing",
+    "operatingSystem": "All"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://writingassistant.org/" },
+      { "@type": "ListItem", "position": 2, "name": "Sentence Length Optimizer", "item": "https://writingassistant.org/tools/sentence-length-optimizer" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "What is sentence length variance?", "acceptedAnswer": { "@type": "Answer", "text": "Sentence length variance measures how much your sentence lengths differ from each other. Higher variance (more variety) generally improves readability." } },
+      { "@type": "Question", "name": "What is ideal sentence length?", "acceptedAnswer": { "@type": "Answer", "text": "Ideal sentence length is typically 15-20 words for general writing. Shorter sentences are punchier, longer ones are more complex. Variety is key." } }
+    ]
+  }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      padding: 1.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-weight: 500;
+      font-size: 1.9rem;
+      letter-spacing: -0.02em;
+      color: #f0f0f0;
+    }
+    h1 span { color: #8b5cf6; }
+    .subhead { color: #aaa; font-size: 0.95rem; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 800px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    textarea {
+      width: 100%;
+      min-height: 320px;
+      background: #141414;
+      border: 1px solid #2e2e2e;
+      border-radius: 12px;
+      color: #e0e0e0;
+      padding: 1.2rem;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: border 0.2s;
+    }
+    textarea:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139,92,246,0.2); }
+    .stats-panel {
+      background: #111;
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid #222;
+    }
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.8rem;
+      margin-bottom: 1.2rem;
+      background: #181818;
+      padding: 0.8rem 1rem;
+      border-radius: 40px;
+    }
+    .stat-item {
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+    }
+    .stat-item .label { color: #999; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .stat-item .value { color: #e0e0e0; font-weight: 500; }
+    .histogram-section {
+      margin-top: 1.5rem;
+      background: #111;
+      border-radius: 16px;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid #222;
+    }
+    .section-title { font-size: 0.9rem; color: #aaa; margin-bottom: 1rem; }
+    canvas {
+      width: 100%;
+      background: #1a1a1a;
+      border-radius: 12px;
+      border: 1px solid #2a2a2a;
+      padding: 1rem 0;
+    }
+    .issue-section {
+      margin-top: 1.5rem;
+      background: #111;
+      border-radius: 16px;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid #222;
+    }
+    .issue-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .issue-item {
+      background: #1a1a1a;
+      border-left: 3px solid #f7a84f;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+      font-size: 0.9rem;
+    }
+    .issue-item.too-long { border-left-color: #f75f5f; }
+    .issue-item.too-short { border-left-color: #4fc3f7; }
+    .issue-label { color: #aaa; font-size: 0.8rem; text-transform: uppercase; }
+    .issue-text { color: #e0e0e0; margin: 0.3rem 0; }
+    .issue-length { color: #999; font-size: 0.8rem; margin-top: 0.2rem; }
+    .no-issues { color: #8bc34a; font-style: italic; }
+    footer {
+      margin-top: 3rem;
+      border-top: 1px solid #222;
+      padding-top: 1.2rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.85rem;
+    }
+    footer a { color: #8b5cf6; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .note { color: #777; font-size: 0.8rem; margin-top: 0.5rem; }
+    .score-badge {
+      display: inline-block;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      padding: 0.5rem 0.8rem;
+      border-radius: 20px;
+      font-weight: 600;
+      color: #8b5cf6;
+      margin: 0.5rem 0;
+    }
+  </style>
+
+  <meta property="og:title" content="Sentence Length Optimizer — Improve Readability">
+  <meta property="og:description" content="Analyze and optimize sentence length variety. View histogram, variance score, and readability impact. Identify too-long and too-short sentences.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://writingassistant.org/tools/sentence-length-optimizer">
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1><span>sentence length</span> optimizer</h1>
+      <div class="subhead">Variance · Distribution · Readability</div>
+    </div>
+    <div style="color:#777; font-size:0.85rem;">⚡ real‑time analysis</div>
+  </header>
+
+  <div class="grid-2">
+    <div>
+      <textarea id="textInput" placeholder="Paste or type your text here...">Writing is important. It is a fundamental skill that helps us communicate our thoughts and ideas to others. We use various techniques to improve our writing. Short. The next sentence is much longer and contains multiple clauses that explain various aspects of good writing practices and techniques. Variety matters. When you mix sentence lengths, your writing becomes more engaging and easier to read for your audience. Never forget this. Sentences that are too long can confuse readers. Keep it simple. However, some longer sentences are necessary to express complex ideas clearly.</textarea>
+    </div>
+    <div class="stats-panel" id="statsPanel">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- histogram -->
+  <div class="histogram-section">
+    <div class="section-title">📊 Sentence Length Distribution</div>
+    <canvas id="lengthHistogram" width="600" height="300"></canvas>
+  </div>
+
+  <!-- issue section -->
+  <div class="issue-section" id="issueSection">
+    <div class="section-title">🔍 Sentences Needing Adjustment</div>
+    <div id="issueContainer" class="issue-list"></div>
+    <div class="note">Too-long: >25 words | Too-short: <5 words</div>
+  </div>
+
+  <footer>
+    <a href="https://writingassistant.org/">writingassistant.org</a> — © 2026 writingassistant.org — Writing Tools
+  </footer>
+</div>
+
+<script>
+  (function() {
+    const textarea = document.getElementById('textInput');
+    const statsPanel = document.getElementById('statsPanel');
+    const issueContainer = document.getElementById('issueContainer');
+    const canvas = document.getElementById('lengthHistogram');
+    const ctx = canvas.getContext('2d');
+
+    function analyzeSentences(text) {
+      const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+      const sentenceLengths = sentences.map(sent => {
+        const words = sent.trim().match(/\b\w+\b/g) || [];
+        return words.length;
+      });
+
+      return {
+        sentences: sentences.map((s, i) => ({
+          text: s.trim(),
+          length: sentenceLengths[i]
+        })),
+        lengths: sentenceLengths
+      };
+    }
+
+    function calculateStats(lengths) {
+      if (lengths.length === 0) return { avg: 0, min: 0, max: 0, variance: 0 };
+
+      const avg = lengths.reduce((a, b) => a + b, 0) / lengths.length;
+      const min = Math.min(...lengths);
+      const max = Math.max(...lengths);
+      const variance = lengths.reduce((sum, len) => sum + Math.pow(len - avg, 2), 0) / lengths.length;
+      const stdDev = Math.sqrt(variance);
+
+      return { avg, min, max, variance, stdDev };
+    }
+
+    function getReadabilityScore(avg, stdDev) {
+      // Score based on average length (ideal 15-20) and variance (higher is better)
+      let score = 50;
+      if (avg >= 10 && avg <= 25) score += 25;
+      if (avg >= 15 && avg <= 20) score += 15;
+      if (stdDev >= 3 && stdDev <= 8) score += 10;
+      return Math.min(100, score);
+    }
+
+    function drawHistogram(lengths) {
+      const padding = 40;
+      const width = canvas.width - 2 * padding;
+      const height = canvas.height - 2 * padding;
+
+      // Clear canvas
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Create bins (0-5, 6-10, 11-15, 16-20, 21-25, 26+)
+      const bins = [0, 0, 0, 0, 0, 0];
+      const binLabels = ['0-5', '6-10', '11-15', '16-20', '21-25', '26+'];
+      lengths.forEach(len => {
+        if (len <= 5) bins[0]++;
+        else if (len <= 10) bins[1]++;
+        else if (len <= 15) bins[2]++;
+        else if (len <= 20) bins[3]++;
+        else if (len <= 25) bins[4]++;
+        else bins[5]++;
+      });
+
+      const maxBin = Math.max(...bins);
+      const barWidth = width / bins.length;
+
+      // Draw bars
+      bins.forEach((count, i) => {
+        const barHeight = (count / Math.max(maxBin, 1)) * height;
+        const x = padding + i * barWidth + barWidth * 0.1;
+        const y = canvas.height - padding - barHeight;
+        const barColor = [
+          '#4fc3f7',  // 0-5: too short
+          '#4fc3f7',  // 6-10: short
+          '#8bc34a',  // 11-15: good
+          '#8bc34a',  // 16-20: ideal
+          '#f7a84f',  // 21-25: long
+          '#f75f5f'   // 26+: too long
+        ][i];
+
+        ctx.fillStyle = barColor;
+        ctx.fillRect(x, y, barWidth * 0.8, barHeight);
+
+        // Label
+        ctx.fillStyle = '#aaa';
+        ctx.font = '12px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText(binLabels[i], x + barWidth * 0.4, canvas.height - padding + 20);
+        ctx.fillText(count, x + barWidth * 0.4, y - 5);
+      });
+
+      // Y-axis label
+      ctx.fillStyle = '#666';
+      ctx.font = '12px system-ui';
+      ctx.textAlign = 'right';
+      ctx.fillText('Count', padding - 10, padding);
+    }
+
+    function updateUI() {
+      const text = textarea.value;
+      const analyzed = analyzeSentences(text);
+      const stats = calculateStats(analyzed.lengths);
+      const score = getReadabilityScore(stats.avg, stats.stdDev);
+
+      // stats panel
+      const scoreColor = score >= 75 ? '#8bc34a' : score >= 50 ? '#f7a84f' : '#f75f5f';
+      const scoreEmoji = score >= 75 ? '✓' : '⚠';
+
+      let html = `
+        <div class="score-badge" style="color: ${scoreColor};">${scoreEmoji} Readability: ${score}/100</div>
+        <div class="stat-row">
+          <div class="stat-item"><span class="label">total sentences</span><span class="value">${analyzed.sentences.length}</span></div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-item"><span class="label">avg length</span><span class="value">${stats.avg.toFixed(1)}</span></div>
+          <div class="stat-item"><span class="label">min</span><span class="value">${stats.min}</span></div>
+          <div class="stat-item"><span class="label">max</span><span class="value">${stats.max}</span></div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-item"><span class="label">std dev</span><span class="value">${stats.stdDev.toFixed(2)}</span></div>
+          <div class="stat-item"><span class="label">variance</span><span class="value">${stats.variance.toFixed(1)}</span></div>
+        </div>
+      `;
+      statsPanel.innerHTML = html;
+
+      // draw histogram
+      drawHistogram(analyzed.lengths);
+
+      // identify issues
+      const tooLong = analyzed.sentences.filter(s => s.length > 25);
+      const tooShort = analyzed.sentences.filter(s => s.length < 5);
+
+      let issueHtml = '';
+      if (tooLong.length === 0 && tooShort.length === 0) {
+        issueHtml = '<div class="no-issues">✓ Good sentence length balance. Your text has nice variety!</div>';
+      } else {
+        if (tooLong.length > 0) {
+          issueHtml += tooLong.slice(0, 5).map(s => `
+            <div class="issue-item too-long">
+              <div class="issue-label">Too Long (${s.length} words)</div>
+              <div class="issue-text">"${escapeHtml(s.text.slice(0, 60))}..."</div>
+              <div class="issue-length">Consider breaking into 2-3 shorter sentences.</div>
+            </div>
+          `).join('');
+        }
+        if (tooShort.length > 0) {
+          issueHtml += tooShort.slice(0, 5).map(s => `
+            <div class="issue-item too-short">
+              <div class="issue-label">Too Short (${s.length} words)</div>
+              <div class="issue-text">"${escapeHtml(s.text)}"</div>
+              <div class="issue-length">Consider combining with adjacent sentence for flow.</div>
+            </div>
+          `).join('');
+        }
+      }
+      issueContainer.innerHTML = issueHtml;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // initial render
+    updateUI();
+    textarea.addEventListener('input', updateUI);
+    window.addEventListener('resize', updateUI);
+  })();
+</script>
+</body>
+</html>

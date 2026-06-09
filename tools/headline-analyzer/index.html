@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Headline Analyzer — SEO-Optimized Headlines</title>
+  <meta name="description" content="Analyze headlines for engagement and SEO. Scores word balance, character count, sentiment, and headline type. Get specific improvement tips with...">
+  <link rel="canonical" href="https://writingassistant.org/tools/headline-analyzer">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2241192243363112" crossorigin="anonymous"></script>
+  <!-- Structured data: WebApplication, FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Headline Analyzer",
+    "url": "https://writingassistant.org/tools/headline-analyzer",
+    "description": "Analyze headlines for engagement and SEO. Scores word balance, character count, sentiment, headline type with specific improvement suggestions.",
+    "applicationCategory": "Writing",
+    "operatingSystem": "All"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://writingassistant.org/" },
+      { "@type": "ListItem", "position": 2, "name": "Headline Analyzer", "item": "https://writingassistant.org/tools/headline-analyzer" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "What makes a good headline?", "acceptedAnswer": { "@type": "Answer", "text": "Good headlines are clear, concise (50-60 chars), contain power words, and promise value. They should be specific and curiosity-inducing without being misleading." } },
+      { "@type": "Question", "name": "Why is headline length important?", "acceptedAnswer": { "@type": "Answer", "text": "Search engines typically display 50-60 characters on desktop. Headlines between 8-14 words tend to get higher click-through rates. Balance is key." } }
+    ]
+  }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      padding: 1.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-weight: 500;
+      font-size: 1.9rem;
+      letter-spacing: -0.02em;
+      color: #f0f0f0;
+    }
+    h1 span { color: #8b5cf6; }
+    .subhead { color: #aaa; font-size: 0.95rem; }
+    .input-section {
+      background: #111;
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid #222;
+      margin-bottom: 2rem;
+    }
+    .input-label { color: #aaa; font-size: 0.9rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    input[type="text"] {
+      width: 100%;
+      background: #141414;
+      border: 1px solid #2e2e2e;
+      border-radius: 12px;
+      color: #e0e0e0;
+      padding: 1rem;
+      font-size: 1.1rem;
+      font-family: inherit;
+      transition: border 0.2s;
+    }
+    input[type="text"]:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139,92,246,0.2); }
+    .score-section {
+      background: #111;
+      border-radius: 16px;
+      padding: 2rem;
+      border: 1px solid #222;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .score-big { font-size: 3.5rem; font-weight: 700; margin: 1rem 0; }
+    .score-100 { color: #8bc34a; }
+    .score-80 { color: #4fc3f7; }
+    .score-60 { color: #f7a84f; }
+    .score-below { color: #f75f5f; }
+    .score-label { color: #aaa; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .metric-card {
+      background: #111;
+      border-radius: 12px;
+      padding: 1rem;
+      border: 1px solid #2a2a2a;
+    }
+    .metric-label { font-size: 0.8rem; color: #999; text-transform: uppercase; letter-spacing: 0.03em; }
+    .metric-value { font-size: 1.8rem; font-weight: 600; color: #e0e0e0; margin: 0.5rem 0; }
+    .metric-detail { font-size: 0.85rem; color: #777; }
+    .analysis-section {
+      background: #111;
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid #222;
+      margin-bottom: 2rem;
+    }
+    .section-title { font-size: 0.9rem; color: #aaa; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .analysis-item {
+      background: #1a1a1a;
+      border-left: 3px solid #8b5cf6;
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.7rem;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+    }
+    .analysis-item.good { border-left-color: #8bc34a; }
+    .analysis-item.caution { border-left-color: #f7a84f; }
+    .analysis-item.bad { border-left-color: #f75f5f; }
+    .item-icon { font-size: 1.1rem; margin-right: 0.5rem; }
+    .item-text { color: #e0e0e0; }
+    .suggestions-section {
+      background: #111;
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid #222;
+    }
+    .suggestion-item {
+      background: #1a1a1a;
+      border-left: 3px solid #8b5cf6;
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.7rem;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+    }
+    .suggestion-title { color: #8b5cf6; font-weight: 600; margin-bottom: 0.3rem; }
+    .suggestion-text { color: #d0d0d0; font-size: 0.95rem; }
+    footer {
+      margin-top: 3rem;
+      border-top: 1px solid #222;
+      padding-top: 1.2rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.85rem;
+    }
+    footer a { color: #8b5cf6; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .preview-section {
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 1rem 0;
+      border: 1px solid #2a2a2a;
+    }
+    .preview-label { font-size: 0.8rem; color: #888; margin-bottom: 0.3rem; }
+    .preview-text { font-size: 0.9rem; color: #4fc3f7; }
+  </style>
+
+  <meta property="og:title" content="Headline Analyzer — SEO-Optimized Headlines">
+  <meta property="og:description" content="Analyze headlines for engagement and SEO. Scores word balance, character count, sentiment, and headline type with improvement tips.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://writingassistant.org/tools/headline-analyzer">
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1><span>headline</span> analyzer</h1>
+      <div class="subhead">Engagement · CTR · Word Balance · Sentiment</div>
+    </div>
+    <div style="color:#777; font-size:0.85rem;">⚡ real‑time analysis</div>
+  </header>
+
+  <div class="input-section">
+    <div class="input-label">Enter your headline:</div>
+    <input type="text" id="headlineInput" placeholder="10 Ways to Improve Your Writing Skills in 30 Days">
+  </div>
+
+  <div class="score-section" id="scoreSection">
+    <div class="score-label">Overall Headline Score</div>
+    <div class="score-big score-100" id="scoreValue">75</div>
+    <div class="input-label" id="scoreStatus">Good headline with room for improvement</div>
+  </div>
+
+  <div class="metrics-grid" id="metricsGrid">
+    <!-- filled by JS -->
+  </div>
+
+  <div class="analysis-section" id="analysisSection">
+    <div class="section-title">📊 Analysis Breakdown</div>
+    <div id="analysisContainer"></div>
+  </div>
+
+  <div class="suggestions-section" id="suggestionsSection">
+    <div class="section-title">💡 Improvement Tips</div>
+    <div id="suggestionsContainer"></div>
+  </div>
+
+  <footer>
+    <a href="https://writingassistant.org/">writingassistant.org</a> — © 2026 writingassistant.org — Writing Tools
+  </footer>
+</div>
+
+<script>
+  (function() {
+    const headlineInput = document.getElementById('headlineInput');
+    const scoreValue = document.getElementById('scoreValue');
+    const scoreStatus = document.getElementById('scoreStatus');
+    const metricsGrid = document.getElementById('metricsGrid');
+    const analysisContainer = document.getElementById('analysisContainer');
+    const suggestionsContainer = document.getElementById('suggestionsContainer');
+
+    const powerWords = ['secret', 'proven', 'ultimate', 'essential', 'best', 'easy', 'simple', 'quick', 'fast', 'powerful', 'amazing', 'breakthrough', 'revolutionary', 'expert', 'transform', 'exclusive', 'rare', 'unique', 'guaranteed', 'trusted'];
+    const emotionalWords = ['love', 'hate', 'incredible', 'insane', 'awesome', 'terrible', 'beautiful', 'brilliant', 'shocking', 'stunning', 'surprising', 'mind-blowing', 'hilarious', 'heartwarming', 'devastating'];
+
+    function analyzeHeadline(headline) {
+      if (!headline.trim()) return null;
+
+      const chars = headline.length;
+      const words = headline.trim().split(/\s+/).filter(w => w.length > 0);
+      const wordCount = words.length;
+      const lowerHeadline = headline.toLowerCase();
+
+      // 1. Length score
+      let lengthScore = 0;
+      if (chars >= 40 && chars <= 70) lengthScore = 30;
+      else if (chars >= 30 && chars <= 80) lengthScore = 20;
+      else if (chars < 30) lengthScore = 10;
+      else lengthScore = 15;
+
+      // 2. Word count score
+      let wordCountScore = 0;
+      if (wordCount >= 6 && wordCount <= 12) wordCountScore = 25;
+      else if (wordCount >= 5 && wordCount <= 14) wordCountScore = 20;
+      else if (wordCount < 5) wordCountScore = 10;
+      else if (wordCount > 14) wordCountScore = 15;
+
+      // 3. Power words
+      let powerWordCount = 0;
+      powerWords.forEach(pw => {
+        if (lowerHeadline.includes(pw)) powerWordCount++;
+      });
+      const powerWordScore = Math.min(20, powerWordCount * 5);
+
+      // 4. Emotional words
+      let emotionalWordCount = 0;
+      emotionalWords.forEach(ew => {
+        if (lowerHeadline.includes(ew)) emotionalWordCount++;
+      });
+      const emotionalScore = Math.min(10, emotionalWordCount * 3);
+
+      // 5. Numbers in headline
+      const numbersMatch = headline.match(/\d+/g);
+      const numberScore = numbersMatch ? 8 : 0;
+
+      // 6. Sentiment
+      let sentiment = 'neutral';
+      let sentimentScore = 5;
+      const negativeWords = ['never', 'worst', 'bad', 'fail', 'avoid', 'stop', 'don\'t'];
+      const positiveCount = emotionalWords.filter(ew => lowerHeadline.includes(ew)).length;
+      const negativeCount = negativeWords.filter(nw => lowerHeadline.includes(nw)).length;
+
+      if (positiveCount > negativeCount) {
+        sentiment = 'positive';
+        sentimentScore = 8;
+      } else if (negativeCount > positiveCount) {
+        sentiment = 'negative';
+        sentimentScore = 5;
+      }
+
+      // 7. Headline type detection
+      let headlineType = 'standard';
+      if (headline.includes('How')) headlineType = 'how-to';
+      if (/^\d+/.test(headline) || headline.includes('Ways') || headline.includes('Reasons')) headlineType = 'list';
+      if (headline.includes('?')) headlineType = 'question';
+
+      // Total score
+      const totalScore = Math.min(100, lengthScore + wordCountScore + powerWordScore + emotionalScore + numberScore + sentimentScore);
+
+      return {
+        chars, wordCount, lengthScore, wordCountScore, powerWordScore, emotionalScore, numberScore, sentimentScore, totalScore,
+        powerWordCount, emotionalWordCount, sentiment, headlineType, numbersMatch: numbersMatch ? numbersMatch.length : 0
+      };
+    }
+
+    function getSuggestions(analysis) {
+      const suggestions = [];
+
+      if (analysis.chars < 40) {
+        suggestions.push({
+          title: 'Expand length',
+          text: 'Headlines under 40 characters may not provide enough context. Consider adding more descriptive words.'
+        });
+      }
+      if (analysis.chars > 70) {
+        suggestions.push({
+          title: 'Reduce length',
+          text: 'Headlines over 70 characters may be truncated in search results. Try cutting to 60-65 characters.'
+        });
+      }
+      if (analysis.wordCount < 6) {
+        suggestions.push({
+          title: 'Add more words',
+          text: 'Headlines with fewer than 6 words may lack detail. Try adding specific keywords or benefits.'
+        });
+      }
+      if (analysis.wordCount > 14) {
+        suggestions.push({
+          title: 'Condense words',
+          text: 'Headlines over 14 words can be overwhelming. Try removing filler words or combining ideas.'
+        });
+      }
+      if (analysis.powerWordCount === 0) {
+        suggestions.push({
+          title: 'Add power words',
+          text: 'Try including power words like: proven, ultimate, essential, breakthrough, or exclusive.'
+        });
+      }
+      if (analysis.numbersMatch === 0) {
+        suggestions.push({
+          title: 'Include a number',
+          text: 'Headlines with numbers get 36% more clicks. Try using "5 Ways" or "7 Tips" instead.'
+        });
+      }
+      if (analysis.sentiment === 'neutral') {
+        suggestions.push({
+          title: 'Add emotion',
+          text: 'Consider using emotional words like: amazing, incredible, stunning, or surprising to engage readers.'
+        });
+      }
+
+      return suggestions;
+    }
+
+    function updateUI() {
+      const headline = headlineInput.value;
+      if (!headline.trim()) {
+        scoreValue.textContent = '—';
+        scoreStatus.textContent = 'Enter a headline to analyze';
+        metricsGrid.innerHTML = '';
+        analysisContainer.innerHTML = '';
+        suggestionsContainer.innerHTML = '';
+        return;
+      }
+
+      const analysis = analyzeHeadline(headline);
+
+      // Update score
+      scoreValue.textContent = Math.round(analysis.totalScore);
+      scoreValue.className = `score-big score-${analysis.totalScore >= 80 ? '100' : analysis.totalScore >= 60 ? '80' : analysis.totalScore >= 40 ? '60' : 'below'}`;
+
+      if (analysis.totalScore >= 80) scoreStatus.textContent = 'Excellent headline! High engagement potential.';
+      else if (analysis.totalScore >= 60) scoreStatus.textContent = 'Good headline with room for improvement.';
+      else if (analysis.totalScore >= 40) scoreStatus.textContent = 'Fair headline. Consider optimizations below.';
+      else scoreStatus.textContent = 'Weak headline. Implement suggestions to improve.';
+
+      // Metrics grid
+      let metricsHtml = `
+        <div class="metric-card">
+          <div class="metric-label">Characters</div>
+          <div class="metric-value">${analysis.chars}</div>
+          <div class="metric-detail">${analysis.chars >= 40 && analysis.chars <= 70 ? '✓ Ideal' : analysis.chars < 40 ? 'Too short' : 'Too long'}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Word Count</div>
+          <div class="metric-value">${analysis.wordCount}</div>
+          <div class="metric-detail">${analysis.wordCount >= 6 && analysis.wordCount <= 12 ? '✓ Ideal' : 'Consider adjusting'}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Power Words</div>
+          <div class="metric-value">${analysis.powerWordCount}</div>
+          <div class="metric-detail">${analysis.powerWordCount >= 1 ? '✓ Found' : 'None detected'}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Emotional Words</div>
+          <div class="metric-value">${analysis.emotionalWordCount}</div>
+          <div class="metric-detail">${analysis.emotionalWordCount >= 1 ? '✓ Found' : 'None detected'}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Numbers</div>
+          <div class="metric-value">${analysis.numbersMatch}</div>
+          <div class="metric-detail">${analysis.numbersMatch > 0 ? '✓ +36% CTR' : 'Try adding one'}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Headline Type</div>
+          <div class="metric-value" style="font-size:1.3rem;text-transform:capitalize;">${analysis.headlineType}</div>
+          <div class="metric-detail">Detected pattern</div>
+        </div>
+      `;
+      metricsGrid.innerHTML = metricsHtml;
+
+      // Analysis breakdown
+      let analysisHtml = `
+        <div class="analysis-item ${analysis.chars >= 40 && analysis.chars <= 70 ? 'good' : 'caution'}">
+          <span class="item-icon">${analysis.chars >= 40 && analysis.chars <= 70 ? '✓' : '⚠'}</span>
+          <span class="item-text"><strong>Length:</strong> ${analysis.chars} chars (${analysis.lengthScore} pts) — ${analysis.chars >= 40 && analysis.chars <= 70 ? 'Perfect for search results' : analysis.chars < 40 ? 'Too short, may lack context' : 'May be truncated'}</span>
+        </div>
+        <div class="analysis-item ${analysis.wordCount >= 6 && analysis.wordCount <= 12 ? 'good' : 'caution'}">
+          <span class="item-icon">${analysis.wordCount >= 6 && analysis.wordCount <= 12 ? '✓' : '⚠'}</span>
+          <span class="item-text"><strong>Words:</strong> ${analysis.wordCount} (${analysis.wordCountScore} pts) — ${analysis.wordCount >= 6 && analysis.wordCount <= 12 ? 'Good balance' : 'Consider rebalancing'}</span>
+        </div>
+        <div class="analysis-item ${analysis.powerWordCount > 0 ? 'good' : 'caution'}">
+          <span class="item-icon">${analysis.powerWordCount > 0 ? '✓' : '⚠'}</span>
+          <span class="item-text"><strong>Power Words:</strong> ${analysis.powerWordCount} found (${analysis.powerWordScore} pts) — ${analysis.powerWordCount > 0 ? 'Great engagement potential' : 'No power words detected'}</span>
+        </div>
+        <div class="analysis-item ${analysis.numbersMatch > 0 ? 'good' : 'caution'}">
+          <span class="item-icon">${analysis.numbersMatch > 0 ? '✓' : '⚠'}</span>
+          <span class="item-text"><strong>Numbers:</strong> ${analysis.numbersMatch} (${analysis.numberScore} pts) — ${analysis.numbersMatch > 0 ? 'Great! Numbers boost CTR by 36%' : 'Add a number for better CTR'}</span>
+        </div>
+        <div class="analysis-item">
+          <span class="item-icon">🎯</span>
+          <span class="item-text"><strong>Sentiment:</strong> ${analysis.sentiment.charAt(0).toUpperCase() + analysis.sentiment.slice(1)} (${analysis.sentimentScore} pts) — ${analysis.sentiment === 'positive' ? 'Readers connect with positive language' : 'Consider more positive framing'}</span>
+        </div>
+      `;
+      analysisContainer.innerHTML = analysisHtml;
+
+      // Suggestions
+      const suggestions = getSuggestions(analysis);
+      let suggestionsHtml = '';
+      if (suggestions.length === 0) {
+        suggestionsHtml = '<div class="suggestion-item"><span class="item-icon">✓</span><span class="item-text"><strong>No immediate suggestions.</strong> Your headline is well-optimized!</span></div>';
+      } else {
+        suggestionsHtml = suggestions.map(s => `
+          <div class="suggestion-item">
+            <div class="suggestion-title">→ ${s.title}</div>
+            <div class="suggestion-text">${s.text}</div>
+          </div>
+        `).join('');
+      }
+      suggestionsContainer.innerHTML = suggestionsHtml;
+    }
+
+    // Initial render with example
+    headlineInput.value = '10 Proven Ways to Improve Your Writing Skills Fast';
+    updateUI();
+    headlineInput.addEventListener('input', updateUI);
+  })();
+</script>
+</body>
+</html>
