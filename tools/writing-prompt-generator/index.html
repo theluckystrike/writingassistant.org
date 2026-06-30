@@ -1,441 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Writing Prompt Generator - Get Inspired</title>
-    <meta name="description" content="Generate creative writing prompts for fiction, essays, journaling, and descriptive writing. Free tool with timer and word counter at writingassistant.org.">
-    <link rel="canonical" href="https://writingassistant.org/tools/writing-prompt-generator">
-    <meta property="og:title" content="Writing Prompt Generator - Get Inspired">
-    <meta property="og:description" content="Generate creative writing prompts for fiction, essays, journaling, and descriptive writing. Free tool with timer and word counter.">
-    <meta property="og:url" content="https://writingassistant.org/tools/writing-prompt-generator">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://writingassistant.org/og-image.jpg">
-    <meta name="twitter:card" content="summary_large_image">
-    <script type="application/ld+json">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Writing Prompt Generator — Free Story Idea Tool</title>
+<meta name="description" content="Free writing prompt generator. Mix genre, character, setting, conflict and theme to spark unlimited story ideas. Instant, client-side, no sign-up.">
+<link rel="canonical" href="https://writingassistant.org/tools/writing-prompt-generator">
+<meta property="og:title" content="Writing Prompt Generator — Free Story Idea Tool">
+<meta property="og:description" content="Mix genre, character, setting, conflict and theme to spark unlimited story ideas instantly in your browser.">
+<meta property="og:url" content="https://writingassistant.org/tools/writing-prompt-generator">
+<meta property="og:type" content="website">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Writing Prompt Generator",
-        "url": "https://writingassistant.org/tools/writing-prompt-generator",
-        "description": "Generate creative writing prompts for fiction, essays, journaling, and descriptive writing.",
-        "applicationCategory": "Writing",
-        "operatingSystem": "All",
-        "browserRequirements": "Requires JavaScript"
+      "@type": "WebApplication",
+      "name": "Writing Prompt Generator",
+      "url": "https://writingassistant.org/tools/writing-prompt-generator",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "author": { "@type": "Person", "name": "Michael Lip", "url": "https://zovo.one" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://writingassistant.org/" },
+        { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://writingassistant.org/tools/" },
+        { "@type": "ListItem", "position": 3, "name": "writing prompt generator", "item": "https://writingassistant.org/tools/writing-prompt-generator" }
+      ]
     }
-    </script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: #0f172a;
-            color: #e2e8f0;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem 1rem;
-        }
-        .container {
-            max-width: 720px;
-            width: 100%;
-            background: #1e293b;
-            border-radius: 1.5rem;
-            padding: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        }
-        h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #f8fafc;
-        }
-        .subtitle {
-            color: #94a3b8;
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
-        }
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-        select, button {
-            background: #0f172a;
-            color: #e2e8f0;
-            border: 1px solid #334155;
-            border-radius: 0.75rem;
-            padding: 0.6rem 1.2rem;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        select:focus, button:focus {
-            outline: 2px solid #38bdf8;
-            outline-offset: 2px;
-        }
-        button {
-            background: #38bdf8;
-            color: #0f172a;
-            font-weight: 600;
-            border: none;
-        }
-        button:hover {
-            background: #7dd3fc;
-            transform: scale(1.02);
-        }
-        .prompt-box {
-            background: #0f172a;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            min-height: 120px;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #38bdf8;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            display: flex;
-            align-items: center;
-        }
-        .prompt-text {
-            width: 100%;
-        }
-        .meta-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem 2rem;
-            margin-bottom: 1.5rem;
-            padding: 0.75rem 0;
-            border-top: 1px solid #334155;
-            border-bottom: 1px solid #334155;
-        }
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: #94a3b8;
-        }
-        .meta-item span {
-            color: #38bdf8;
-            font-weight: 600;
-        }
-        .timer-controls {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-        .timer-controls button {
-            padding: 0.3rem 0.8rem;
-            font-size: 0.8rem;
-            background: #334155;
-            color: #e2e8f0;
-        }
-        .timer-controls button:hover {
-            background: #475569;
-        }
-        textarea {
-            width: 100%;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            color: #e2e8f0;
-            font-size: 1rem;
-            resize: vertical;
-            min-height: 120px;
-            font-family: inherit;
-            line-height: 1.5;
-        }
-        textarea:focus {
-            outline: 2px solid #38bdf8;
-            outline-offset: 2px;
-        }
-        .word-count {
-            text-align: right;
-            font-size: 0.85rem;
-            color: #94a3b8;
-            margin-top: 0.25rem;
-        }
-        .word-count span {
-            color: #38bdf8;
-            font-weight: 600;
-        }
-        footer {
-            margin-top: 2rem;
-            text-align: center;
-            color: #64748b;
-            font-size: 0.85rem;
-            max-width: 720px;
-            width: 100%;
-        }
-        footer a {
-            color: #38bdf8;
-            text-decoration: none;
-        }
-        footer a:hover {
-            text-decoration: underline;
-        }
-        @media (max-width: 500px) {
-            .container { padding: 1.25rem; }
-            h1 { font-size: 1.5rem; }
-            .controls { flex-direction: column; }
-        }
-    </style>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2241192243363112" crossorigin="anonymous"></script>
+  ]
+}
+</script>
+<style>
+:root{
+  --bg:#0e1116; --panel:#161b22; --panel2:#1c232d; --bd:#2b333d;
+  --ink:#e7edf3; --mut:#9aa7b4; --acc:#7aa2ff; --acc2:#4ee0a0;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.6;
+}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+nav{
+  display:flex;gap:18px;padding:14px 20px;border-bottom:1px solid var(--bd);
+  background:var(--panel);font-size:.95rem
+}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 60px}
+h1{font-size:1.9rem;line-height:1.2;margin:.2em 0 .3em}
+h2{font-size:1.25rem;margin:1.8em 0 .5em}
+.lead{color:var(--mut);font-size:1.05rem;margin-top:0}
+#tool{
+  background:var(--panel);border:1px solid var(--bd);border-radius:14px;
+  padding:22px;margin:24px 0
+}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);margin-bottom:5px}
+select,input[type=text]{
+  width:100%;padding:10px 12px;background:var(--panel2);color:var(--ink);
+  border:1px solid var(--bd);border-radius:9px;font-size:.95rem
+}
+.row-tone{margin-top:14px}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{
+  cursor:pointer;border:none;border-radius:9px;padding:11px 18px;
+  font-size:.95rem;font-weight:600
+}
+.primary{background:var(--acc);color:#0b1020}
+.ghost{background:var(--panel2);color:var(--ink);border:1px solid var(--bd)}
+button:hover{filter:brightness(1.08)}
+#out{
+  margin-top:20px;background:var(--panel2);border:1px solid var(--bd);
+  border-left:3px solid var(--acc2);border-radius:10px;padding:18px 20px;
+  font-size:1.12rem;min-height:64px
+}
+#meta{margin-top:8px;color:var(--mut);font-size:.85rem}
+.toggle{display:flex;align-items:center;gap:8px;margin-top:14px;color:var(--mut);font-size:.9rem}
+.toggle input{width:auto}
+footer{border-top:1px solid var(--bd);padding:22px 20px;color:var(--mut);font-size:.9rem;text-align:center}
+footer a{margin:0 8px}
+.related a{display:inline-block;margin:4px 10px 4px 0}
+code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-size:.88em}
+</style>
 </head>
 <body>
-<div class="container">
-    <h1>✍️ Writing Prompt Generator</h1>
-    <p class="subtitle">Get inspired — fiction, essays, journaling, descriptive</p>
+<nav>
+  <a href="/">Home</a>
+  <a href="/tools/">Tools</a>
+</nav>
+<div class="wrap">
+  <h1>Writing Prompt Generator</h1>
+  <p class="lead">Stuck on a blank page? Combine a genre, character, setting, conflict and theme to generate an endless supply of original story prompts — instantly, in your browser.</p>
 
-    <div class="controls">
-        <select id="categorySelect" aria-label="Filter by category">
-            <option value="all">All Categories</option>
-            <option value="fiction">Fiction</option>
-            <option value="essay">Essay</option>
-            <option value="journal">Journal</option>
-            <option value="descriptive">Descriptive</option>
-        </select>
-        <button id="generateBtn">Generate Prompt</button>
+  <section id="tool" aria-label="Writing prompt generator tool">
+    <div class="grid">
+      <div>
+        <label for="genre">Genre</label>
+        <select id="genre"></select>
+      </div>
+      <div>
+        <label for="character">Protagonist</label>
+        <select id="character"></select>
+      </div>
+      <div>
+        <label for="setting">Setting</label>
+        <select id="setting"></select>
+      </div>
+      <div>
+        <label for="conflict">Core conflict</label>
+        <select id="conflict"></select>
+      </div>
     </div>
 
-    <div class="prompt-box">
-        <div class="prompt-text" id="promptDisplay">Click "Generate Prompt" to start writing.</div>
+    <div class="row-tone grid">
+      <div>
+        <label for="theme">Theme</label>
+        <select id="theme"></select>
+      </div>
+      <div>
+        <label for="keyword">Your keyword (optional)</label>
+        <input type="text" id="keyword" placeholder="e.g. lighthouse, betrayal, jazz">
+      </div>
     </div>
 
-    <div class="meta-bar">
-        <div class="meta-item">⏱️ Timer: <span id="timerDisplay">00:00</span></div>
-        <div class="timer-controls">
-            <button id="startTimerBtn">Start</button>
-            <button id="resetTimerBtn">Reset</button>
-        </div>
-        <div class="meta-item">📝 Words: <span id="wordCountDisplay">0</span></div>
+    <label class="toggle"><input type="checkbox" id="firstperson"> Write in first person ("I")</label>
+
+    <div class="btns">
+      <button class="primary" id="gen">Generate prompt</button>
+      <button class="ghost" id="copy">Copy</button>
     </div>
 
-    <textarea id="writingArea" placeholder="Start writing here... Your words will be counted automatically."></textarea>
-    <div class="word-count">Word count: <span id="wordCountInline">0</span></div>
+    <div id="out" aria-live="polite"></div>
+    <div id="meta"></div>
+  </section>
+
+  <h2>How this generator works</h2>
+  <p>Every great story premise is a collision of forces. This tool builds prompts using a classic five-slot formula drawn from screenwriting and short-fiction craft: <code>[Protagonist] + [Setting] + [Inciting conflict] + [Theme] + [Twist]</code>. Each dropdown feeds one slot, and the generator stitches them into a grammatically complete, ready-to-write premise rather than a loose list of words.</p>
+  <p>When you press <strong>Generate</strong>, the algorithm picks one phrase from the active option pool for any slot you have left on its default, then selects a sentence template at random and fills the slots. A separate pool of <em>twists</em> — a secret, a deadline, a reversal, an unexpected ally — is appended so no two prompts feel identical even with the same genre. If you type a keyword, it is woven directly into the premise as an anchoring noun, which is useful when you want to write toward a specific image or word for a contest or daily exercise.</p>
+  <p>The math is simple but the space is enormous. With six genres, a dozen protagonists, a dozen settings, ten conflicts, ten themes, eight twists and four sentence templates, the combinatorial total runs into the hundreds of thousands of distinct prompts — far more than you could exhaust in a year of daily writing. Locking specific dropdowns lets you constrain the randomness: fix the genre to "mystery" and the theme to "redemption," and only the remaining slots shuffle. Everything runs client-side with zero network calls, so it works offline and your ideas never leave the page.</p>
+  <p>Use a fresh prompt as a ten-minute warm-up, a flash-fiction seed, or the spine of a novel chapter. Re-roll until one snags your imagination — that flicker of "what if?" is the only signal you need.</p>
+
+  <h2>Related Tools</h2>
+  <p class="related">
+    <a href="/tools/story-outline-generator">Story Outline Generator</a>
+    <a href="/tools/character-name-generator">Character Name Generator</a>
+    <a href="/tools/random-word-generator">Random Word Generator</a>
+  </p>
 </div>
 
 <footer>
-    <p>© 2025 <a href="https://writingassistant.org">writingassistant.org</a> — Free writing tools for everyone.</p>
+  <div>
+    <a href="/">Home</a>
+    <a href="/tools/">All Tools</a>
+    <a href="/tools/writing-prompt-generator">Writing Prompt Generator</a>
+  </div>
+  <div>© 2026 WritingAssistant.org</div>
 </footer>
-<div style="margin:20px auto;max-width:728px;text-align:center">
-<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2241192243363112" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
 
 <script>
-    (function() {
-        // ----- 80+ prompts database -----
-        const prompts = [
-            // Fiction (20)
-            { text: "A stranger leaves a mysterious note on your windshield. What does it say?", category: "fiction" },
-            { text: "You discover a hidden room in your house that wasn't there before.", category: "fiction" },
-            { text: "Write about a world where people can only speak in rhymes.", category: "fiction" },
-            { text: "A detective who can't lie solves a crime where everyone is telling the truth.", category: "fiction" },
-            { text: "You wake up as your pet. Describe your day.", category: "fiction" },
-            { text: "The last library on Earth holds a dangerous secret.", category: "fiction" },
-            { text: "A time traveler accidentally brings a medieval knight to the present.", category: "fiction" },
-            { text: "Write a story that begins with 'The door slid open, and nothing was there.'", category: "fiction" },
-            { text: "A child's imaginary friend starts giving real advice.", category: "fiction" },
-            { text: "In a world without color, one person sees a single hue.", category: "fiction" },
-            { text: "A robot learns to dream. What does it dream about?", category: "fiction" },
-            { text: "Two strangers are forced to share a phone for a week.", category: "fiction" },
-            { text: "Write about a heist where the target is a memory.", category: "fiction" },
-            { text: "A ghost tries to scare a family but falls in love with their dog.", category: "fiction" },
-            { text: "The ocean suddenly becomes fresh water. What happens next?", category: "fiction" },
-            { text: "You find a camera that takes pictures of the past.", category: "fiction" },
-            { text: "A village where everyone tells a story every night, and one story comes true.", category: "fiction" },
-            { text: "Write from the perspective of a tree that has seen centuries.", category: "fiction" },
-            { text: "A musician discovers their music can heal wounds.", category: "fiction" },
-            { text: "The moon disappears. No one knows why.", category: "fiction" },
-            // Essay (20)
-            { text: "What is a belief you held strongly that you later changed?", category: "essay" },
-            { text: "Describe a moment when you felt truly alive.", category: "essay" },
-            { text: "What does 'home' mean to you?", category: "essay" },
-            { text: "Write about a book that changed your perspective.", category: "essay" },
-            { text: "What is the role of failure in success?", category: "essay" },
-            { text: "How has technology changed the way we connect?", category: "essay" },
-            { text: "Describe a tradition you cherish and why.", category: "essay" },
-            { text: "What is something you wish you had learned earlier in life?", category: "essay" },
-            { text: "Write about a time you helped a stranger.", category: "essay" },
-            { text: "What does courage look like in everyday life?", category: "essay" },
-            { text: "How do you define creativity?", category: "essay" },
-            { text: "What is the most important lesson nature teaches us?", category: "essay" },
-            { text: "Write about a piece of advice you would give your younger self.", category: "essay" },
-            { text: "What does it mean to be a good friend?", category: "essay" },
-            { text: "How do you find balance in a busy world?", category: "essay" },
-            { text: "Describe a place that feels like a sanctuary to you.", category: "essay" },
-            { text: "What is a skill you want to learn and why?", category: "essay" },
-            { text: "Write about the value of listening.", category: "essay" },
-            { text: "What does 'success' look like to you?", category: "essay" },
-            { text: "How has a challenge shaped who you are?", category: "essay" },
-            // Journal (20)
-            { text: "What made you smile today?", category: "journal" },
-            { text: "Describe a small moment that brought you peace.", category: "journal" },
-            { text: "What is something you are grateful for right now?", category: "journal" },
-            { text: "Write about a dream you remember vividly.", category: "journal" },
-            { text: "What emotion have you felt most today?", category: "journal" },
-            { text: "Describe a conversation that stayed with you.", category: "journal" },
-            { text: "What is one thing you learned this week?", category: "journal" },
-            { text: "Write a letter to your future self.", category: "journal" },
-            { text: "What is a memory that makes you laugh?", category: "journal" },
-            { text: "How do you feel about the person you are becoming?", category: "journal" },
-            { text: "What is something you want to let go of?", category: "journal" },
-            { text: "Describe a moment you felt proud of yourself.", category: "journal" },
-            { text: "What is a simple pleasure you enjoy?", category: "journal" },
-            { text: "Write about a challenge you are currently facing.", category: "journal" },
-            { text: "What does your ideal day look like?", category: "journal" },
-            { text: "How do you practice self-care?", category: "journal" },
-            { text: "What is something you are curious about?", category: "journal" },
-            { text: "Describe a time you felt completely understood.", category: "journal" },
-            { text: "What is a fear you want to overcome?", category: "journal" },
-            { text: "Write about a person who inspires you.", category: "journal" },
-            // Descriptive (20)
-            { text: "Describe a bustling market in a coastal town.", category: "descriptive" },
-            { text: "Paint a picture of a forest after a rainstorm.", category: "descriptive" },
-            { text: "Describe the view from a mountaintop at sunrise.", category: "descriptive" },
-            { text: "Write about the smell of an old library.", category: "descriptive" },
-            { text: "Describe a city street at midnight.", category: "descriptive" },
-            { text: "What does a thunderstorm sound like from inside a cabin?", category: "descriptive" },
-            { text: "Describe the texture of a worn-out leather chair.", category: "descriptive" },
-            { text: "Write about the taste of a homemade meal from your childhood.", category: "descriptive" },
-            { text: "Describe a garden in full bloom.", category: "descriptive" },
-            { text: "What does the air feel like before a snowfall?", category: "descriptive" },
-            { text: "Describe a busy train station during rush hour.", category: "descriptive" },
-            { text: "Write about the colors of a sunset over the ocean.", category: "descriptive" },
-            { text: "Describe the inside of an abandoned house.", category: "descriptive" },
-            { text: "What does a campfire smell like on a cool night?", category: "descriptive" },
-            { text: "Describe the sound of waves crashing on a rocky shore.", category: "descriptive" },
-            { text: "Write about the feeling of walking barefoot on grass.", category: "descriptive" },
-            { text: "Describe a crowded art gallery opening.", category: "descriptive" },
-            { text: "What does a fresh-baked apple pie look and smell like?", category: "descriptive" },
-            { text: "Describe the first light of dawn through a window.", category: "descriptive" },
-            { text: "Write about the sensation of diving into cool water on a hot day.", category: "descriptive" }
-        ];
+(function(){
+  "use strict";
+  var DATA = {
+    genre: ["fantasy","mystery","science fiction","romance","horror","literary"],
+    character: [
+      "a disgraced cartographer","a retired stage magician","an insomniac night-shift nurse",
+      "a teenage codebreaker","a grieving lighthouse keeper","an exiled royal botanist",
+      "a small-town locksmith","a war photographer turned baker","a sentient library archivist",
+      "a freelance memory broker","a washed-up child prodigy","a reluctant village oracle"
+    ],
+    setting: [
+      "a city that only appears at low tide","a generation ship three centuries from port",
+      "a snowbound mountain observatory","a flooded subway turned marketplace",
+      "a monastery that records dreams","a border town between two warring seasons",
+      "an abandoned amusement park","a colony beneath the ice of a distant moon",
+      "a 24-hour diner at the edge of the map","a forest where the trees keep score",
+      "a hotel for travelers between lives","a desert archive of forbidden books"
+    ],
+    conflict: [
+      "must deliver a message before sunrise","discovers their own name in a stranger's diary",
+      "is the only one who remembers yesterday","accidentally inherits a debt to something inhuman",
+      "must choose between two impossible loyalties","is hunted by a copy of themselves",
+      "uncovers a town's collective lie","has seventy-two hours to undo one mistake",
+      "finds a door that should not exist","must protect a child who isn't quite human"
+    ],
+    theme: [
+      "redemption","the cost of memory","belonging","the price of ambition",
+      "forgiveness","identity","sacrifice","the weight of truth","letting go","hope against odds"
+    ],
+    twist: [
+      "but the help they trust most is lying.",
+      "and the deadline is sooner than anyone admits.",
+      "though the real threat is already inside.",
+      "yet the answer was hidden in plain sight all along.",
+      "and saving everyone means losing the one thing they love.",
+      "but the rules change the moment they're understood.",
+      "and the ending depends on a choice made years ago.",
+      "though no one will believe the truth even after it's proven."
+    ]
+  };
 
-        // ----- DOM refs -----
-        const promptDisplay = document.getElementById('promptDisplay');
-        const generateBtn = document.getElementById('generateBtn');
-        const categorySelect = document.getElementById('categorySelect');
-        const timerDisplay = document.getElementById('timerDisplay');
-        const startTimerBtn = document.getElementById('startTimerBtn');
-        const resetTimerBtn = document.getElementById('resetTimerBtn');
-        const writingArea = document.getElementById('writingArea');
-        const wordCountDisplay = document.getElementById('wordCountDisplay');
-        const wordCountInline = document.getElementById('wordCountInline');
+  var TEMPLATES = [
+    function(p){ return "In "+p.setting+", "+p.character+" "+p.conflict+" — a story about "+p.theme+", "+p.twist; },
+    function(p){ return capit(p.character)+", living in "+p.setting+", "+p.conflict+". At its heart it's about "+p.theme+", "+p.twist; },
+    function(p){ return "A "+p.genre+" tale: "+p.character+" "+p.conflict+" in "+p.setting+". Theme — "+p.theme+", "+p.twist; },
+    function(p){ return "What if "+p.character+" "+p.conflict+"? Set in "+p.setting+", it explores "+p.theme+", "+p.twist; }
+  ];
 
-        // ----- Timer state -----
-        let timerInterval = null;
-        let seconds = 0;
-        let isRunning = false;
+  function rnd(a){ return a[Math.floor(Math.random()*a.length)]; }
+  function capit(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+  function firstPerson(s){
+    return s.replace(/\btheir\b/g,"my").replace(/\bthemselves\b/g,"myself")
+            .replace(/\bthey\b/g,"I").replace(/\bThey\b/g,"I")
+            .replace(/I's\b/g,"my").replace(/\bI's\b/g,"my");
+  }
 
-        function formatTime(sec) {
-            const m = Math.floor(sec / 60);
-            const s = sec % 60;
-            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
+  function fillSelect(id, arr, fmt){
+    var el = document.getElementById(id);
+    var o = document.createElement("option");
+    o.value = ""; o.textContent = "— surprise me —";
+    el.appendChild(o);
+    arr.forEach(function(v){
+      var opt = document.createElement("option");
+      opt.value = v; opt.textContent = fmt ? fmt(v) : v;
+      el.appendChild(opt);
+    });
+  }
 
-        function updateTimerDisplay() {
-            timerDisplay.textContent = formatTime(seconds);
-        }
+  fillSelect("genre", DATA.genre, capit);
+  fillSelect("character", DATA.character, capit);
+  fillSelect("setting", DATA.setting, capit);
+  fillSelect("conflict", DATA.conflict);
+  fillSelect("theme", DATA.theme, capit);
 
-        function startTimer() {
-            if (isRunning) return;
-            isRunning = true;
-            timerInterval = setInterval(() => {
-                seconds++;
-                updateTimerDisplay();
-            }, 1000);
-            startTimerBtn.textContent = 'Pause';
-        }
+  function pick(id, pool){
+    var v = document.getElementById(id).value;
+    return v || rnd(pool);
+  }
 
-        function pauseTimer() {
-            if (!isRunning) return;
-            clearInterval(timerInterval);
-            timerInterval = null;
-            isRunning = false;
-            startTimerBtn.textContent = 'Resume';
-        }
+  function generate(){
+    var kw = document.getElementById("keyword").value.trim();
+    var p = {
+      genre: pick("genre", DATA.genre),
+      character: pick("character", DATA.character),
+      setting: pick("setting", DATA.setting),
+      conflict: pick("conflict", DATA.conflict),
+      theme: pick("theme", DATA.theme),
+      twist: rnd(DATA.twist)
+    };
+    if(kw){
+      p.setting = p.setting + " marked by a " + kw;
+    }
+    var tpl = rnd(TEMPLATES);
+    var text = tpl(p);
+    if(document.getElementById("firstperson").checked){
+      text = firstPerson(text);
+    }
+    text = text.charAt(0).toUpperCase()+text.slice(1);
+    document.getElementById("out").textContent = text;
+    var words = text.split(/\s+/).filter(Boolean).length;
+    document.getElementById("meta").textContent =
+      p.genre.charAt(0).toUpperCase()+p.genre.slice(1)+" prompt · "+words+" words · theme: "+p.theme;
+  }
 
-        function resetTimer() {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            isRunning = false;
-            seconds = 0;
-            updateTimerDisplay();
-            startTimerBtn.textContent = 'Start';
-        }
+  document.getElementById("gen").addEventListener("click", generate);
+  ["genre","character","setting","conflict","theme","firstperson"].forEach(function(id){
+    document.getElementById(id).addEventListener("change", generate);
+  });
+  document.getElementById("keyword").addEventListener("input", generate);
 
-        startTimerBtn.addEventListener('click', function() {
-            if (isRunning) {
-                pauseTimer();
-            } else {
-                startTimer();
-            }
-        });
+  document.getElementById("copy").addEventListener("click", function(){
+    var t = document.getElementById("out").textContent;
+    if(!t) return;
+    var ta = document.createElement("textarea");
+    ta.value = t; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); }catch(e){}
+    document.body.removeChild(ta);
+    var b = this; var old = b.textContent;
+    b.textContent = "Copied!"; setTimeout(function(){ b.textContent = old; }, 1400);
+  });
 
-        resetTimerBtn.addEventListener('click', resetTimer);
-
-        // ----- Word counter -----
-        function countWords(text) {
-            const trimmed = text.trim();
-            if (!trimmed) return 0;
-            return trimmed.split(/\s+/).length;
-        }
-
-        function updateWordCount() {
-            const text = writingArea.value;
-            const count = countWords(text);
-            wordCountDisplay.textContent = count;
-            wordCountInline.textContent = count;
-        }
-
-        writingArea.addEventListener('input', updateWordCount);
-
-        // ----- Generate prompt -----
-        function getFilteredPrompts() {
-            const category = categorySelect.value;
-            if (category === 'all') return prompts;
-            return prompts.filter(p => p.category === category);
-        }
-
-        function generatePrompt() {
-            const filtered = getFilteredPrompts();
-            if (filtered.length === 0) {
-                promptDisplay.textContent = 'No prompts for this category. Try another!';
-                return;
-            }
-            const randomIndex = Math.floor(Math.random() * filtered.length);
-            promptDisplay.textContent = filtered[randomIndex].text;
-        }
-
-        generateBtn.addEventListener('click', generatePrompt);
-
-        // Also generate on category change (optional)
-        categorySelect.addEventListener('change', generatePrompt);
-
-        // ----- Initial prompt on load -----
-        generatePrompt();
-
-        // ----- Ensure word count updates on page load -----
-        updateWordCount();
-
-        // ----- Clean up timer on page unload (optional) -----
-        window.addEventListener('beforeunload', function() {
-            if (timerInterval) clearInterval(timerInterval);
-        });
-    })();
+  // Prefill so output shows on load
+  generate();
+})();
 </script>
-<div style="margin:30px auto;max-width:728px;text-align:center;padding:18px 24px;background:linear-gradient(135deg,#0f172a,#1e293b);border:1px solid #334155;border-radius:10px">
-<p style="margin:0 0 6px;color:#94a3b8;font-size:0.85rem">Recommended by our team</p>
-<a href="https://www.belikenative.com?ref=satellite" target="_blank" rel="noopener" style="color:#38bdf8;font-weight:600;font-size:1.05rem;text-decoration:none">BeLikeNative.com</a>
-<p style="margin:6px 0 0;color:#cbd5e1;font-size:0.9rem">The #1 AI writing tool for freelancers — perfect grammar in any language, instantly.</p>
-</div>
 </body>
 </html>
