@@ -14,9 +14,10 @@
     "@type": "WebApplication",
     "name": "Grammar Checker",
     "url": "https://writingassistant.org/tools/grammar-checker",
-    "description": "Real-time grammar checking: subject-verb agreement, double negatives, run-on sentences, fragments, commonly confused words.",
+    "description": "The Grammar Checker looks for subject-verb agreement errors, double negatives, run-on sentences, fragments and confused words. It lists each issue with its type, the offending text and a suggestion, and counts each category. The check repeats on every keystroke, inside your browser, with nothing uploaded.",
     "applicationCategory": "Writing",
-    "operatingSystem": "All"
+    "operatingSystem": "All",
+    "dateModified": "2026-10-28"
   }
   </script>
   <script type="application/ld+json">
@@ -162,6 +163,16 @@
     }
     .score-badge.warn { color: #f7a84f; }
     .score-badge.error { color: #f75f5f; }
+    .answer-block { background: #111; border: 1px solid #222; border-left: 3px solid #8b5cf6; border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; }
+    .answer-block .breadcrumb { font-size: 0.8rem; color: #888; margin-bottom: 0.5rem; }
+    .answer-block .breadcrumb a { color: #8b5cf6; text-decoration: none; }
+    .answer-block .quick-answer { color: #ddd; font-size: 0.98rem; margin: 0 0 0.5rem; }
+    .answer-block .updated-date { color: #777; font-size: 0.78rem; margin: 0; }
+    .faq { margin-top: 2rem; border-top: 1px solid #222; padding-top: 1.2rem; }
+    .faq h2 { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.8rem; color: #ddd; }
+    .faq details { background: #111; border: 1px solid #222; border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 0.6rem; }
+    .faq summary { cursor: pointer; color: #e0e0e0; font-size: 0.95rem; }
+    .faq details p { color: #bbb; font-size: 0.92rem; margin-top: 0.6rem; }
   </style>
 
   <meta property="og:title" content="Grammar Checker — Real-time Writing Analysis">
@@ -179,6 +190,13 @@
     <div style="color:#777; font-size:0.85rem;">⚡ real‑time analysis</div>
   </header>
 
+  <div class="answer-block">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://writingassistant.org/">Home</a> / <span>Grammar Checker</span></nav>
+    <p class="quick-answer">The Grammar Checker looks for subject-verb agreement errors, double negatives, run-on sentences, fragments and confused words. It lists each issue with its type, the offending text and a suggestion, and counts each category. The check repeats on every keystroke, inside your browser, with nothing uploaded.</p>
+    <p class="updated-date">Updated 2026-10-28</p>
+  </div>
+
+
   <div class="grid-2">
     <div>
       <textarea id="textInput" placeholder="Paste or type your text here...">The team are working on the project. She don't know nothing about the grammar rules. The cat and dog is sleeping on the couch. Run on sentences combines two independent clauses without proper punctuation or conjunctions connecting them together. Its important to check you're writing for grammatical errors. The students was studying. Fragment. Another fragment here.</textarea>
@@ -194,6 +212,12 @@
     <div id="issueContainer" class="issue-list"></div>
     <div class="note">Click on an issue to understand the correction.</div>
   </div>
+
+    <section class="faq" aria-label="Frequently asked questions">
+    <h2>Frequently asked questions</h2>
+    <details><summary>What does subject-verb agreement mean?</summary><p>The subject and verb in a sentence must match in number. Singular subjects need singular verbs, plural subjects need plural verbs.</p></details>
+    <details><summary>What is a run-on sentence?</summary><p>A run-on sentence joins two independent clauses without proper punctuation or conjunctions.</p></details>
+  </section>
 
   <footer>
     <a href="https://writingassistant.org/">writingassistant.org</a> — © 2026 writingassistant.org — Writing Tools
