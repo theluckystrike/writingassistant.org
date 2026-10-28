@@ -14,9 +14,10 @@
     "@type": "WebApplication",
     "name": "Headline Analyzer",
     "url": "https://writingassistant.org/tools/headline-analyzer",
-    "description": "Analyze headlines for engagement and SEO. Scores word balance, character count, sentiment, headline type with specific improvement suggestions.",
+    "description": "The Headline Analyzer scores a headline out of 100 using character count, word count, power words, emotional words, numbers and sentiment. It returns specific improvement tips and names the headline type it detected, such as how-to, list or question, so you can see which pattern your draft follows.",
     "applicationCategory": "Writing",
-    "operatingSystem": "All"
+    "operatingSystem": "All",
+    "dateModified": "2026-10-28"
   }
   </script>
   <script type="application/ld+json">
@@ -178,6 +179,16 @@
     }
     .preview-label { font-size: 0.8rem; color: #888; margin-bottom: 0.3rem; }
     .preview-text { font-size: 0.9rem; color: #4fc3f7; }
+    .answer-block { background: #111; border: 1px solid #222; border-left: 3px solid #8b5cf6; border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; }
+    .answer-block .breadcrumb { font-size: 0.8rem; color: #888; margin-bottom: 0.5rem; }
+    .answer-block .breadcrumb a { color: #8b5cf6; text-decoration: none; }
+    .answer-block .quick-answer { color: #ddd; font-size: 0.98rem; margin: 0 0 0.5rem; }
+    .answer-block .updated-date { color: #777; font-size: 0.78rem; margin: 0; }
+    .faq { margin-top: 2rem; border-top: 1px solid #222; padding-top: 1.2rem; }
+    .faq h2 { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.8rem; color: #ddd; }
+    .faq details { background: #111; border: 1px solid #222; border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 0.6rem; }
+    .faq summary { cursor: pointer; color: #e0e0e0; font-size: 0.95rem; }
+    .faq details p { color: #bbb; font-size: 0.92rem; margin-top: 0.6rem; }
   </style>
 
   <meta property="og:title" content="Headline Analyzer — SEO-Optimized Headlines">
@@ -194,6 +205,13 @@
     </div>
     <div style="color:#777; font-size:0.85rem;">⚡ real‑time analysis</div>
   </header>
+
+  <div class="answer-block">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://writingassistant.org/">Home</a> / <span>Headline Analyzer</span></nav>
+    <p class="quick-answer">The Headline Analyzer scores a headline out of 100 using character count, word count, power words, emotional words, numbers and sentiment. It returns specific improvement tips and names the headline type it detected, such as how-to, list or question, so you can see which pattern your draft follows.</p>
+    <p class="updated-date">Updated 2026-10-28</p>
+  </div>
+
 
   <div class="input-section">
     <div class="input-label">Enter your headline:</div>
@@ -219,6 +237,12 @@
     <div class="section-title">💡 Improvement Tips</div>
     <div id="suggestionsContainer"></div>
   </div>
+
+    <section class="faq" aria-label="Frequently asked questions">
+    <h2>Frequently asked questions</h2>
+    <details><summary>What makes a good headline?</summary><p>Good headlines are clear, concise (50-60 chars), contain power words, and promise value. They should be specific and curiosity-inducing without being misleading.</p></details>
+    <details><summary>Why is headline length important?</summary><p>Search engines typically display 50-60 characters on desktop. Headlines between 8-14 words tend to get higher click-through rates. Balance is key.</p></details>
+  </section>
 
   <footer>
     <a href="https://writingassistant.org/">writingassistant.org</a> — © 2026 writingassistant.org — Writing Tools

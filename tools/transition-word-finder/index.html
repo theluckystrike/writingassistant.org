@@ -14,9 +14,10 @@
     "@type": "WebApplication",
     "name": "Transition Word Finder",
     "url": "https://writingassistant.org/tools/transition-word-finder",
-    "description": "Find and suggest transition words. Analyzes transition frequency, detects missing transitions, suggests appropriate transitions by type.",
+    "description": "The Transition Word Finder sorts the transition words in your draft into addition, contrast, cause, sequence and summary. It lists the words it found, flags each paragraph that opens without a transition, and suggests connectors for it. The analysis repeats as you type and needs no account.",
     "applicationCategory": "Writing",
-    "operatingSystem": "All"
+    "operatingSystem": "All",
+    "dateModified": "2026-10-28"
   }
   </script>
   <script type="application/ld+json">
@@ -184,6 +185,16 @@
       color: #8b5cf6;
       margin: 0.5rem 0;
     }
+    .answer-block { background: #111; border: 1px solid #222; border-left: 3px solid #8b5cf6; border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; }
+    .answer-block .breadcrumb { font-size: 0.8rem; color: #888; margin-bottom: 0.5rem; }
+    .answer-block .breadcrumb a { color: #8b5cf6; text-decoration: none; }
+    .answer-block .quick-answer { color: #ddd; font-size: 0.98rem; margin: 0 0 0.5rem; }
+    .answer-block .updated-date { color: #777; font-size: 0.78rem; margin: 0; }
+    .faq { margin-top: 2rem; border-top: 1px solid #222; padding-top: 1.2rem; }
+    .faq h2 { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.8rem; color: #ddd; }
+    .faq details { background: #111; border: 1px solid #222; border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 0.6rem; }
+    .faq summary { cursor: pointer; color: #e0e0e0; font-size: 0.95rem; }
+    .faq details p { color: #bbb; font-size: 0.92rem; margin-top: 0.6rem; }
   </style>
 
   <meta property="og:title" content="Transition Word Finder — Improve Writing Flow">
@@ -200,6 +211,13 @@
     </div>
     <div style="color:#777; font-size:0.85rem;">⚡ real‑time analysis</div>
   </header>
+
+  <div class="answer-block">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://writingassistant.org/">Home</a> / <span>Transition Word Finder</span></nav>
+    <p class="quick-answer">The Transition Word Finder sorts the transition words in your draft into addition, contrast, cause, sequence and summary. It lists the words it found, flags each paragraph that opens without a transition, and suggests connectors for it. The analysis repeats as you type and needs no account.</p>
+    <p class="updated-date">Updated 2026-10-28</p>
+  </div>
+
 
   <div class="grid-2">
     <div>
@@ -222,6 +240,12 @@
     <div id="paragraphContainer"></div>
     <div class="note">Paragraphs with few or no transitions may benefit from smoother connections.</div>
   </div>
+
+    <section class="faq" aria-label="Frequently asked questions">
+    <h2>Frequently asked questions</h2>
+    <details><summary>What are transition words?</summary><p>Transition words are words or phrases that connect ideas and improve the flow between sentences and paragraphs.</p></details>
+    <details><summary>Why are transition words important?</summary><p>They help readers understand the relationships between ideas and make your writing more coherent and easier to follow.</p></details>
+  </section>
 
   <footer>
     <a href="https://writingassistant.org/">writingassistant.org</a> — © 2026 writingassistant.org — Writing Tools

@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://writingassistant.org/</loc>
-    <lastmod>2026-06-03</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -56,25 +56,25 @@
   </url>
   <url>
     <loc>https://writingassistant.org/tools/passive-voice-converter/</loc>
-    <lastmod>2026-06-14</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://writingassistant.org/tools/grammar-checker/</loc>
-    <lastmod>2026-06-14</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://writingassistant.org/tools/transition-word-finder/</loc>
-    <lastmod>2026-06-14</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://writingassistant.org/tools/headline-analyzer/</loc>
-    <lastmod>2026-06-14</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -86,8 +86,26 @@
   </url>
   <url>
     <loc>https://writingassistant.org/tools/</loc>
-    <lastmod>2026-06-03</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://writingassistant.org/guides/reading-time-by-word-count/</loc>
+    <lastmod>2026-10-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://writingassistant.org/guides/flesch-reading-ease-score-chart/</loc>
+    <lastmod>2026-10-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://writingassistant.org/guides/reducing-passive-voice/</loc>
+    <lastmod>2026-10-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>
